@@ -74,8 +74,13 @@ trial_df = pd.DataFrame({"block": [1,2,3],
 
 trial_df
 
-tidy_trial_df = pd.melt(trial_df,id_vars=['block'],var_name='treatment',value_name='response')
+tidy_trial_df = pd.melt(trial_df,
+                  id_vars=['block'],
+                  var_name='treatment',
+                  value_name='response')
 tidy_trial_df
 
 ```
+
+All columns, accept for “block”, are stacked in two columns: a “key” and a “value”. The key column gets the name treatment and the value column reveives the name response. For each row in the result, the key is taken from the name of the column and the value from the data in the column.
 
