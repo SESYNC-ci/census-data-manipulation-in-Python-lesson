@@ -1,0 +1,111 @@
+---
+# empflag for NA strings
+#
+---
+
+## Sample Data
+
+![]({% include asset.html path="images/data.jpg" %}){: width="50%"}  
+*Credit: [US Census Bureau](https://www.census.gov/programs-surveys/cbp.html)*
+{:.captioned}
+
+===
+
+To learn about data transformation with dplyr, we need more data. The Census
+Bureau collects subnational economic data for the U.S., releasing annual [County
+Business Patterns (CBP)] datasets including the number of establishments,
+employment, and payroll by industry. They also conduct the [American Community
+Survey (ACS)] and publish, among other demographic and economic variables, estimates of
+median income for individuals working in different industries.
+{:.notes}
+
+- [County Business Patterns (CBP)]
+- [American Community Survey (ACS)]
+
+[County Business Patterns (CBP)]: https://www.census.gov/programs-surveys/cbp/data/datasets.html
+[American Community Survey (ACS)]: https://www.census.gov/programs-surveys/acs/
+
+===
+
+```{python read_data, handout = 0, results = 'hide'}
+
+#library(data.table)
+#cbp <- fread('data/cbp15co.csv')
+import pandas as pd
+cbp = pd.read_csv('data/training/cbp15co.csv')
+cbp.describe()
+
+```
+```{python}
+#str(cbp)
+print(cbp.dtypes)
+```
+
+See the [CBP dataset documentation] for an explanation of the variables we don't
+discuss in this lesson.
+{:.notes}
+
+[CBP dataset documentation]: https://www2.census.gov/programs-surveys/rhfs/cbp/technical%20documentation/2015_record_layouts/county_layout_2015.txt
+
+===
+
+Modify the import to clean up this read: consider the data type for FIPS codes
+along with what string in this CSV file represents NAs, a.k.a. data that is
+not-available or missing.
+
+```{python read_data_na, handout = 0, results = 'hide'}
+#cbp <- fread(
+#  'data/cbp15co.csv',
+#  na.strings = NULL,
+#  colClasses = c(
+#    FIPSTATE='character',
+#    FIPSCTY='character'))
+import numpy as np
+import pandas as pd
+
+cbp = pd.read_csv(
+  'data/cbp15co.csv',
+  na_values = "NULL",
+  keep_default_na=False,
+  dtype =  {"FIPSTATE": np.str, "FIPSCTY": np.str}
+  )
+
+```
+
+===
+
+Question
+: What changed?
+
+Answer
+: {:.fragment} Using `str()` shows that the character string `""` in the CSV
+file is no longer read into R as missing data (an `NA`) but as an empty string.
+The two named "FIPS" columns are now correctly read as strings.
+
+
+===
+
+```{python handout = 0, results = 'hide'}
+acs =  pd.read_csv(
+  'data/ACS/sector_ACS_15_5YR_S2413.csv',
+  dtype = {"FIPS": np.str})
+
+#cbp = pd.read_csv(
+#  'data/cbp15co.csv',
+#  dtype = {"FIPS": np.str}
+#  )
+```
+```{python}
+#acs.dtypes
+print(acs.dtypes)
+```
+
+===
+
+The two datasets both contain economic variables for each U.S. county and
+specified by different categories of industry. The data could potentially be
+manipulated into a single table reflecting the follow statistical model.
+
+$$
+median\_income \sim industry + establishment\_size
+$$
