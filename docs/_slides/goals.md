@@ -67,17 +67,46 @@ https://datascience.stackexchange.com/questions/10478/is-there-any-data-tidying-
 
 
 ~~~python
-> 
-+ y = 1
-+ x = 2
-+ z = x + y
-+ z
+> import pandas as pd
++ import numpy as np
++ trial_df = pd.DataFrame({"block": [1,2,3],
++               "drug": [0.22,0.12,0.42],
++               "control": [0.58,0.98,0.19],
++               "placebo": [0.31,0.47,0.40]})
++ 
++ trial_df
 ~~~
 {:title="Console" .input}
 
 
 ~~~
-3
+   block  control  drug  placebo
+0      1     0.58  0.22     0.31
+1      2     0.98  0.12     0.47
+2      3     0.19  0.42     0.40
 ~~~
 {:.output}
+
+
+~~~python
+> tidy_trial_df = pd.melt(trial_df,id_vars=['block'],var_name='treatment',value_name='response')
++ tidy_trial_df
+~~~
+{:title="Console" .input}
+
+
+~~~
+   block treatment  response
+0      1   control      0.58
+1      2   control      0.98
+2      3   control      0.19
+3      1      drug      0.22
+4      2      drug      0.12
+5      3      drug      0.42
+6      1   placebo      0.31
+7      2   placebo      0.47
+8      3   placebo      0.40
+~~~
+{:.output}
+
 

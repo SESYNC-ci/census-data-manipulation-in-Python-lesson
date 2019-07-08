@@ -64,8 +64,7 @@ The pandas package’s melt function reshapes “wide” data frames into “lon
 
 https://datascience.stackexchange.com/questions/10478/is-there-any-data-tidying-tool-for-python-pandas-similar-to-r-tidyr-tool
 
-```{python}
-
+```{python,echo=TRUE}
 import pandas as pd
 import numpy as np
 trial_df = pd.DataFrame({"block": [1,2,3],
@@ -74,10 +73,9 @@ trial_df = pd.DataFrame({"block": [1,2,3],
               "placebo": [0.31,0.47,0.40]})
 
 trial_df
-#tidy_trial <- gather(trial,
-#  key = "treatment",
-# value = "response",
-# -block)
 
+tidy_trial_df = pd.melt(trial_df,id_vars=['block'],var_name='treatment',value_name='response')
+tidy_trial_df
 
 ```
+
