@@ -66,9 +66,18 @@ https://datascience.stackexchange.com/questions/10478/is-there-any-data-tidying-
 
 ```{python}
 
-y = 1
-x = 2
-z = x + y
-z
+import pandas as pd
+import numpy as np
+trial_df = pd.DataFrame({"block": [1,2,3],
+              "drug": [0.22,0.12,0.42],
+              "control": [0.58,0.98,0.19],
+              "placebo": [0.31,0.47,0.40]})
+
+trial_df
+#tidy_trial <- gather(trial,
+#  key = "treatment",
+# value = "response",
+# -block)
+
 
 ```
