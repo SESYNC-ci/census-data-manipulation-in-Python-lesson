@@ -1,0 +1,10 @@
+title: census-data-manipulation-in-Python      # the lesson's title
+handouts:        # a list of handouts, e.g. worksheets and data
+ - ...
+tag:          # current handout release version
+lesson: 0      # the number of the lesson (for /instructor view)
+instructor: Benoit Parmentier  # the name of the instructor (for /instructor view)
+authors:     # a list of those writing the lesson
+ -  Benoit Parmentier
+sorter:          # a ordered list of slides (file names without extension)
+ - goals           # contained in the top-level "slides" folder
