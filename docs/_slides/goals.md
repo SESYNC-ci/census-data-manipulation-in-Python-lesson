@@ -42,7 +42,10 @@ Consider a data set where the outcome of an experiment has been recorded in a pe
 
 The response data are present in a compact matrix, as you might record it on a spreadsheet. The form does not match how we think about a statistical model, such as:
 
-response  ~ 
+
+$$
+response \sim block + treatment
+$$
 
 In a tidy format, each row is a complete observation: it includes the response value and all the predictor values. In this data, some of those predictor values are column headers, so the table needs to be reshaped. The pandas package provides functions to help re-organize tables.
 
@@ -89,7 +92,10 @@ https://datascience.stackexchange.com/questions/10478/is-there-any-data-tidying-
 
 
 ~~~python
-> tidy_trial_df = pd.melt(trial_df,id_vars=['block'],var_name='treatment',value_name='response')
+> tidy_trial_df = pd.melt(trial_df,
++                   id_vars=['block'],
++                   var_name='treatment',
++                   value_name='response')
 + tidy_trial_df
 ~~~
 {:title="Console" .input}
@@ -108,5 +114,18 @@ https://datascience.stackexchange.com/questions/10478/is-there-any-data-tidying-
 8      3   placebo      0.40
 ~~~
 {:.output}
+
+
+===
+
+All columns, accept for “block”, are stacked in two columns: a “key” and a “value”. The key column gets the name treatment and the value column reveives the name response. For each row in the result, the key is taken from the name of the column and the value from the data in the column.
+
+## From long to wide
+
+Data can also fail to be tidy when a table is too long. The Entity-Attribute-Value (EAV) structure common in large databases distributes multible attributes of a single entity/observation into separate rows.
+
+Remember that the exact state of “tidy” may depend on the analysis: the key is knowing what counts as a complete observation. For example, the community ecology package vegan requires a matrix of species counts, where rows correspond to species and columns to sites. This may seem like too “wide” a format, but in the packages several multi-variate analyses, the abundance of a species across multiple sites is considered a complete observation.
+
+Consider survey data on participant’s age and income stored in a EAV structure.
 
 
