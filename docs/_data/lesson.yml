@@ -10,3 +10,4 @@ sorter:          # a ordered list of slides (file names without extension)
  - goals           # contained in the top-level "slides" folder
  - gather
  - data
+ - dml

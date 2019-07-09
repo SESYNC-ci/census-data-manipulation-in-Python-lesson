@@ -94,13 +94,22 @@ not-available or missing.
 
 
 
-~~~r
-cbp <- fread(
+~~~python
+#cbp <- fread(
+#  'data/cbp15co.csv',
+#  na.strings = NULL,
+#  colClasses = c(
+#    FIPSTATE='character',
+#    FIPSCTY='character'))
+import numpy as np
+import pandas as pd
+
+cbp = pd.read_csv(
   'data/cbp15co.csv',
-  na.strings = NULL,
-  colClasses = c(
-    FIPSTATE='character',
-    FIPSCTY='character'))
+  na_values = "NULL",
+  keep_default_na=False,
+  dtype =  {"FIPSTATE": np.str, "FIPSCTY": np.str}
+  )
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
@@ -115,43 +124,8 @@ Answer
 file is no longer read into R as missing data (an `NA`) but as an empty string.
 The two named "FIPS" columns are now correctly read as strings.
 
-
 ===
 
 
 
-~~~r
-acs <- fread(
-  'data/ACS/sector_ACS_15_5YR_S2413.csv',
-  colClasses = c(FIPS='character'))
-~~~
-{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
-
-
-~~~r
-> str(acs)
-~~~
-{:title="Console" .input}
-
-
-~~~
-Classes 'data.table' and 'data.frame':	59698 obs. of  4 variables:
- $ FIPS         : chr  "01001" "01003" "01005" "01007" ...
- $ County       : chr  "Autauga County, Alabama" "Baldwin County, Alabama" "Barbour County, Alabama" "Bibb County, Alabama" ...
- $ Sector       : chr  "agriculture forestry fishing and hunting" "agriculture forestry fishing and hunting" "agriculture forestry fishing and hunting" "agriculture forestry fishing and hunting" ...
- $ median_income: int  27235 40017 32260 22240 21260 30469 33300 39784 40417 20370 ...
- - attr(*, ".internal.selfref")=<externalptr> 
-~~~
-{:.output}
-
-
-===
-
-The two datasets both contain economic variables for each U.S. county and
-specified by different categories of industry. The data could potentially be
-manipulated into a single table reflecting the follow statistical model.
-
-$$
-median\_income \sim industry + establishment\_size
-$$

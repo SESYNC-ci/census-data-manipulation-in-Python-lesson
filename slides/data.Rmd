@@ -82,20 +82,14 @@ Answer
 file is no longer read into R as missing data (an `NA`) but as an empty string.
 The two named "FIPS" columns are now correctly read as strings.
 
-
 ===
 
 ```{python handout = 0, results = 'hide'}
 acs =  pd.read_csv(
   'data/ACS/sector_ACS_15_5YR_S2413.csv',
   dtype = {"FIPS": np.str})
-
-#cbp = pd.read_csv(
-#  'data/cbp15co.csv',
-#  dtype = {"FIPS": np.str}
-#  )
 ```
-```{python}
+```{python,echo=TRUE}
 #acs.dtypes
 print(acs.dtypes)
 ```
