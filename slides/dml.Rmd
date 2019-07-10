@@ -70,8 +70,17 @@ the result as a new column of the same length.
 Here's one you've probably needed before:
 
 ```{python, handout = 0}
-cbp3 <- mutate(cbp2,
-  FIPS = str_c(FIPSTATE, FIPSCTY))
+#cbp3 <- mutate(cbp2,
+#  FIPS = str_c(FIPSTATE, FIPSCTY))
+  #cbp3["FIPS2"] = cbp3["FIPSTATE"].str.cat(["FIPSCTY"])
+cbp3["FIPSTATE"]= cbp3["FIPSTATE"].astype(str)
+cbp3["FIPSCTY"]= cbp3["FIPSCTY"].astype(str)
+
+cbp3["FIPS"] = cbp3["FIPSTATE"]+cbp3["FIPSCTY"]
+#cbp3.assign(FIPS=cbp3["FIPSTATE"]+cbp3["FIPSCTY"])
+cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
+cbp3[["FIPS", "FIPS2","FIPSTATE","FIPSCTY"]].head()
+
 ```
 
 ===
@@ -82,6 +91,8 @@ Multiple arguments to `mutate` produce multiple transformations.
 cbp3 <- mutate(cbp2,
   FIPS = str_c(FIPSTATE, FIPSCTY),
   NAICS = str_remove(NAICS, '-+'))
+
+
 ```
 
 ===
