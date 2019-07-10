@@ -38,7 +38,6 @@ cbp2 = cbp2[~cbp2.NAICS.str.contains("-----")]
 
 cbp2.head()
 
-
 ```
 
 Note that a logical we used the function `contains` from pandas to filter the dataset in two steps. The function contains allows for pattern matching of any character within strings. The `~` is used to remove the rows that contains specific patterns.
