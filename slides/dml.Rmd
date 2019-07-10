@@ -129,11 +129,15 @@ cbp3.head()
 
 Alternatively, we can use other methods to select using match patterns.
 
-```{r select, handout = 0}
-cbp <- cbp %>%
-  select(
-    FIPS,
-    NAICS,
-    starts_with('N')
-  )
+```{python select, handout = 0}
+
+cbp4 = cbp.filter(like='^N',axis=1) | cbp.filter(items=['FIPS','NAICS'],axis=1)
+cbp4.head()
+
+#cbp <- cbp %>%
+#  select(
+#    FIPS,
+#    NAICS,
+#   starts_with('N')
+#  )
 ```
