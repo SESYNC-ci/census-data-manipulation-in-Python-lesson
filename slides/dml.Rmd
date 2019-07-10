@@ -127,12 +127,26 @@ cbp3.head()
 
 ===
 
-Alternatively, we can use other methods to select using match patterns.
+Alternatively, we can use other methods to select using match patterns. For instance, select all columns starting with N using the filter command
+
+```{python select, handout = 0}
+cbp4 = cbp.filter(items=['FIPS','NAICS'],axis=1) | cbp.filter(regex='^N',axis=1) 
+
+cbp4.head()
+#cbp <- cbp %>%
+#  select(
+#    FIPS,
+#    NAICS,
+#   starts_with('N')
+#  )
+```
 
 ```{python select, handout = 0}
 
-cbp4 = cbp.filter(like='^N',axis=1) | cbp.filter(items=['FIPS','NAICS'],axis=1)
+cbp.filter(regex='^N',axis=1)
+filter(items=['FIPS','NAICS'],axis=1)
 cbp4.head()
+
 
 #cbp <- cbp %>%
 #  select(
