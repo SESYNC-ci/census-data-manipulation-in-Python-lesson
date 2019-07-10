@@ -50,8 +50,8 @@ Filtering string often uses pattern matching by [regular expressions]
 which may be a bit more manageable, and streamlines the operations.
 
 ```{python message = FALSE, handout = 0}
-cbp2 = cbp[cbp['NAICS'].str.contains('[0-9]{2}----')]
-cbp2.head()
+cbp3 = cbp[cbp['NAICS'].str.contains('[0-9]{2}----')]
+cbp3.head()
 
 
 ```
@@ -72,13 +72,15 @@ Here's one you've probably needed before:
 
 ```{python, handout = 0}
 #cbp3["FIPS2"] = cbp3["FIPSTATE"].str.cat(["FIPSCTY"])
-cbp2["FIPSTATE"]= cbp2["FIPSTATE"].astype(str)
-cbp2["FIPSCTY"]= cbp2["FIPSCTY"].astype(str)
+cbp3["FIPSTATE"]= cbp3["FIPSTATE"].astype(str)
+cbp3["FIPSCTY"]= cbp3["FIPSCTY"].astype(str)
 
-cbp2["FIPS"] = cbp2["FIPSTATE"]+cbp2["FIPSCTY"]
+cbp3["FIPS"] = cbp3["FIPSTATE"]+cbp3["FIPSCTY"]
 #cbp3.assign(FIPS=cbp3["FIPSTATE"]+cbp3["FIPSCTY"])
-cbp2.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
+cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
 #cbp3[["FIPS", "FIPS2","FIPSTATE","FIPSCTY"]].head()
+cbp3.shape
+cbp3.head()
 
 ```
 
@@ -88,8 +90,10 @@ Multiple arguments to `mutate` produce multiple transformations.
 
 ```{python, handout = 0}
 
-cbp2.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'],
+cbp2 = cbp2.assign(FIPS=lambda x: x['FIPSTATE']+x['FIPSCTY'],
             NAICS = cbp2['NAICS'].str.replace('-+',''))
+ 
+cbp2.head()           
 ```
 
 
@@ -102,14 +106,14 @@ the `select` function with arguments that match column names.
 
 ```{python}
 #names(cbp)
-cbp.columns
+cbp2.columns
 ```
 
 ===
 
 One way to "match" is by including complete names, each one you want to keep:
 
-```{python eval = FALSE}
+```{python eval = True}
 #cbp %>%
 #  select(
 #    FIPS,
@@ -123,7 +127,7 @@ cbp3.head()
 
 ===
 
-Alternatively, we can use a "select helper" to match patterns.
+Alternatively, we can use other methods to select using match patterns.
 
 ```{r select, handout = 0}
 cbp <- cbp %>%
