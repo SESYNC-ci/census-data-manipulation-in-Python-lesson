@@ -10,13 +10,16 @@ across multiple NAICS codes representing a single industry sector.
 
 ===
 
-```{r handout = 0}
-sector <- fread(
+```{python handout = 0}
+#sector <- fread(
+#  'data/ACS/sector_naics.csv',
+#  colClasses = c(NAICS='character'))
+sector =  pd.read_csv(
   'data/ACS/sector_naics.csv',
-  colClasses = c(NAICS='character'))
+  dtype = {"NAICS": np.str})
 ```
-```{r eval = FALSE}
-View(sector)
+```{python eval = True}
+sector.head()
 ```
 
 Probably the primary challenge in combining secondary datasets for synthesis
