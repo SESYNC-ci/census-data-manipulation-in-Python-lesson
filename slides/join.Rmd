@@ -17,6 +17,7 @@ across multiple NAICS codes representing a single industry sector.
 sector =  pd.read_csv(
   'data/ACS/sector_naics.csv',
   dtype = {"NAICS": np.str})
+cbp.head()
 ```
 ```{python eval = True}
 sector.head()
@@ -34,13 +35,25 @@ solution of re-aggregating data at the "lower resolution".
 
 ### Many-to-One
 
-```{r handout = 0}
-cbp <- cbp %>%
-  inner_join(sector)
+```{python handout = 0}
+
+#cbp = pd.read_csv(
+#  'data/cbp15co.csv',
+ # na_values = "NULL",
+ # keep_default_na=False,
+#  dtype = {"FIPSTATE": np.str, "FIPSCTY": np.str}
+#  )
+
+#cbp <- cbp %>%
+#  inner_join(sector)
+#cbp.head()
+
+cbp_test = cbp.merge(sector)
+cbp_test.head()
 ```
 
 ```{r eval = FALSE}
-View(cbp)
+cbp_test.head()
 ```
 
 ===
