@@ -14,14 +14,23 @@ across multiple NAICS codes representing a single industry sector.
 #sector <- fread(
 #  'data/ACS/sector_naics.csv',
 #  colClasses = c(NAICS='character'))
+#sector =  pd.read_csv(
+#  'data/ACS/sector_naics.csv',
+#  dtype = {"NAICS": np.str})
 sector =  pd.read_csv(
   'data/ACS/sector_naics.csv',
-  dtype = {"NAICS": np.str})
+  dtype = {"NAICS": np.int64})
+print(sector.dtypes)
+print(cbp.dtypes)
+cbp.head()
+cbp.dtypes
 cbp.head()
 ```
 ```{python eval = True}
 print(sector.dtypes)
+print(sector.shape) #24 economic sectors
 sector.head()
+#print(sector.shape)
 ```
 
 Probably the primary challenge in combining secondary datasets for synthesis
@@ -48,13 +57,22 @@ solution of re-aggregating data at the "lower resolution".
 #cbp <- cbp %>%
 #  inner_join(sector)
 #cbp.head()
+logical_idx = cbp['NAICS'].str.match('[0-9]{2}----')
+cbp = cbp.loc[logical_idx]
+cbp.head()
+cbp.shape
 
-cbp_test = cbp.merge(sector)
-cbp_test.head()
+#print(cbp.NAICS)
+cbp['NAICS']= cbp.NAICS.apply(lambda x: np.int64(x[0:2]))
+#print(cbp['NAICS'][0:1][0:2])
+
 ```
 
 ```{r eval = FALSE}
+cbp_test = cbp.merge(sector, on = "NAICS")
+print(cbp_test.shape)
 cbp_test.head()
+
 ```
 
 ===
