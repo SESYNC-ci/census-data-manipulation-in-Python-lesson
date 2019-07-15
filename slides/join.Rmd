@@ -20,6 +20,7 @@ sector =  pd.read_csv(
 cbp.head()
 ```
 ```{python eval = True}
+print(sector.dtypes)
 sector.head()
 ```
 

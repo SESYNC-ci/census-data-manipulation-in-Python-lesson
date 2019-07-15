@@ -76,9 +76,7 @@ cbp3["FIPSTATE"]= cbp3["FIPSTATE"].astype(str)
 cbp3["FIPSCTY"]= cbp3["FIPSCTY"].astype(str)
 
 cbp3["FIPS"] = cbp3["FIPSTATE"]+cbp3["FIPSCTY"]
-#cbp3.assign(FIPS=cbp3["FIPSTATE"]+cbp3["FIPSCTY"])
 cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
-#cbp3[["FIPS", "FIPS2","FIPSTATE","FIPSCTY"]].head()
 cbp3.shape
 cbp3.head()
 
