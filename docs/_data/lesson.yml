@@ -12,3 +12,5 @@ sorter:          # a ordered list of slides (file names without extension)
  - data
  - dml
  - join
+ - conclude
+ - exercise
