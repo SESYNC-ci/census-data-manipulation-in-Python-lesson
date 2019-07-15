@@ -68,10 +68,17 @@ cbp['NAICS']= cbp.NAICS.apply(lambda x: np.int64(x[0:2]))
 
 ```
 
-```{r eval = FALSE}
+```{python}
+#Many to one to join economic sector code to NAICS
+print
 cbp_test = cbp.merge(sector, on = "NAICS")
 print(cbp_test.shape)
 cbp_test.head()
+print(cbp_test.shape)
+
+cbp_test2 = cbp.merge(sector, on = "NAICS", how='inner')
+cbp_test2.head()
+print(cbp_test2.shape)
 
 ```
 
