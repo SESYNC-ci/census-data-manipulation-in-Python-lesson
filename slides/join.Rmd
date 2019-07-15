@@ -114,20 +114,36 @@ in each size class *aggregated within* each county and industry sector.
 
 ===
 
-The dplyr function `group_by` begins the process by indicating how the data
+The pandas function `group_by` begins the process by indicating how the data
 frame should be split into subsets.
 
-```{r handout = 0}
-cbp_grouped <- cbp %>%
-  group_by(FIPS, Sector)
+```{python handout = 0}
+#cbp_grouped <- cbp %>%
+#  group_by(FIPS, Sector)
+
+#cbp["FIPSTATE"]= cbp["FIPSTATE"].astype(str)
+#cbp["FIPSCTY"]= cbp["FIPSCTY"].astype(str)
+
+#cbp["FIPS"] = cbp["FIPSTATE"]+cbp["FIPSCTY"]
+
+cbp_test = cbp.merge(sector, on = "NAICS")
+#print(cbp_test.shape)
+cbp_test.head()
+
+cbp_grouped = cbp_test.groupby(['FIPS','Sector'])
+#cbp_grouped = cbp.groupby(['Sector'])
+
+
+
 ```
 
 ===
 
 At this point, nothing has really changed:
 
-```{r}
-str(cbp_grouped)
+```{python}
+#str(cbp_grouped)
+cbp_grouped.dtypes
 ```
 
 The `group_by` statement does not change any values in the data frame; it only

@@ -141,8 +141,8 @@ cbp4.head()
 ```
 
 ```{python select, handout = 0}
-
-test=cbp.filter(regex='^N',axis=1) | cbp.filter(items=['FIPS','NAICS'],axis=1)
+cbp4.head()
+#test=cbp.filter(regex='^N',axis=1) | cbp.filter(items=['FIPS','NAICS'],axis=1)
 
 #cbp.filter(items=['FIPS','NAICS'],axis=1)
 #cbp4.head()
@@ -156,6 +156,6 @@ test=cbp.filter(regex='^N',axis=1) | cbp.filter(items=['FIPS','NAICS'],axis=1)
 #    NAICS,
 #   starts_with('N')
 #  )
-test.columns
+#test.columns
 
 ```

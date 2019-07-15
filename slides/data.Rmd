@@ -85,10 +85,14 @@ The two named "FIPS" columns are now correctly read as strings.
 ===
 
 ```{python handout = 0, results = 'hide'}
+import pandas as pd
+import numpy as np
 acs =  pd.read_csv(
   'data/ACS/sector_ACS_15_5YR_S2413.csv',
-  dtype = {"FIPS": np.str})
+  dtype = {"FIPS": np.str}
+  )
 ```
+Now let's display the data types
 ```{python,echo=TRUE}
 #acs.dtypes
 print(acs.dtypes)
