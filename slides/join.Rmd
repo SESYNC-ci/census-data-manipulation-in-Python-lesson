@@ -168,10 +168,10 @@ are automically combined into a data frame.
 #  select(starts_with('N'), -NAICS) %>%
 #  summarize_all(sum)
 
-cbp = cbp.groupby(['FIPS', 'Sector') %>%
-  select(starts_with('N'), -NAICS) %>%
-  summarize_all(sum)
-
+test43 = (cbp_test.groupby(['FIPS', 'Sector']) 
+                  #.filter(regex='^N)
+                  #.filter(~['NAICS'])
+                  .agg('sum'))
 ```
 
 The "combine" part of "split-apply-combine" occurs automatically, when the
