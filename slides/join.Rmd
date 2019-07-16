@@ -124,15 +124,17 @@ frame should be split into subsets.
 #cbp["FIPSTATE"]= cbp["FIPSTATE"].astype(str)
 #cbp["FIPSCTY"]= cbp["FIPSCTY"].astype(str)
 
-#cbp["FIPS"] = cbp["FIPSTATE"]+cbp["FIPSCTY"]
+cbp["FIPS"] = cbp["FIPSTATE"]+cbp["FIPSCTY"]
 
 cbp_test = cbp.merge(sector, on = "NAICS")
 #print(cbp_test.shape)
-cbp_test.head()
+#cbp_test.head()
+#cbp_test.columns
 
 cbp_grouped = cbp_test.groupby(['FIPS','Sector'])
 #cbp_grouped = cbp.groupby(['Sector'])
 
+cbp_grouped
 
 
 ```
@@ -169,15 +171,15 @@ are automically combined into a data frame.
 #  summarize_all(sum)
 
 test43 = (cbp_test.groupby(['FIPS', 'Sector']) 
-                  #.filter(regex='^N)
-                  #.filter(~['NAICS'])
-                  .agg('sum'))
+                  .agg('sum')
+                  .filter(regex='^N')
+                  .filter(regex='^(?!NAICS$).*'))
+test43.head(5)
 ```
 
 The "combine" part of "split-apply-combine" occurs automatically, when the
-attributes introduced by `group_by` are dropped. You can see attributes either
-by running the `str()` function on the data frame or by inspecting it in the
-RStudio *Environment* pane.
+attributes introduced by `groupby` are dropped. You can see attributes 
+by running the `dtypes` function on the data frame.
 {:.notes}
 
 ===
@@ -190,9 +192,14 @@ the combination of FIPS and Sector as the primary key for both tables.
 
 ===
 
-```{r handout = 0}
-acs_cbp <- cbp %>%
-  inner_join(acs)
+```{python handout = 0}
+#acs_cbp <- cbp %>%
+#  inner_join(acs)
+
+acs_cbp = test43.merge(acs)
+#print(acs_cbp.shape)
+print(test43.shape)
+print(acs.shape)
 ```
 
 Again, however, the one-to-one relationship does not mean all rows are preserved
