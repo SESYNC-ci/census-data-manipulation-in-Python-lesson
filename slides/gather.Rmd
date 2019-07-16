@@ -71,19 +71,21 @@ survey_df
 
 ```
 
-Transform the data with the `spread` function, which "reverses" a `gather`.
+Transform the data with the `pivot` function, which "reverses" a `melt`. These are equivalent to `spread` and `gather` in dplyr r package.
+
 
 ```{python, echo=TRUE}
-
-
 tidy_survey = survey_df.pivot(index='participant',
                           columns='attr',
                           values='val')
+print(tidy_survey.head())
 tidy_survey = tidy_survey.reset_index()
 tidy_survey.columns
 tidy_survey.reset_index()
 
 tidy_survey
+
+#https://stmorse.github.io/journal/tidyverse-style-pandas.html
 
 ```
 

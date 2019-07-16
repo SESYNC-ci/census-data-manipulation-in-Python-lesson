@@ -72,29 +72,21 @@ Here's one you've probably needed before:
 
 ```{python, handout = 0}
 #cbp3["FIPS2"] = cbp3["FIPSTATE"].str.cat(["FIPSCTY"])
-cbp3["FIPSTATE"]= cbp3["FIPSTATE"].astype(str)
-cbp3["FIPSCTY"]= cbp3["FIPSCTY"].astype(str)
-
+#cbp3["FIPSTATE"]= cbp3["FIPSTATE"].astype(str)
+#cbp3["FIPSCTY"]= cbp3["FIPSCTY"].astype(str)
+cbp3.dtypes
 cbp3["FIPS"] = cbp3["FIPSTATE"]+cbp3["FIPSCTY"]
-cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
+#cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
 cbp3.shape
-cbp3.head()
-
+#cbp3.head()
 ```
 
 ===
-
 Multiple arguments to `mutate` produce multiple transformations.
-
-```{python, handout = 0}
-
-cbp2 = cbp2.assign(FIPS=lambda x: x['FIPSTATE']+x['FIPSCTY'],
-            NAICS = cbp2['NAICS'].str.replace('-+',''))
- 
-cbp2.head()           
+```{python}
+#cbp5 = cbp2.assign(FIPS=lambda x: x['FIPSTATE']+x['FIPSCTY'],NAICS = cbp2['NAICS'].str.replace('-+',''))
+#cbp5.head()
 ```
-
-
 ===
 
 ### Select
@@ -125,37 +117,11 @@ cbp3.head()
 
 ===
 
-Alternatively, we can use other methods to select using match patterns. For instance, select all columns starting with N using the filter command
+Alternatively, we can use other methods to select using match patterns. For instance, select all columns starting with N using or matching 'FIPS' or 'NAICS' pattern wwith the filter command.
 
 ```{python select, handout = 0}
-cbp4 = cbp.filter(items=['FIPS','NAICS'],axis=1) 
-cbp4.filter(regex='^N',axis=1) 
+cbp4= cbp.filter(regex='^N|FIPS|NAICS',axis=1) 
 
 cbp4.head()
-#cbp <- cbp %>%
-#  select(
-#    FIPS,
-#    NAICS,
-#   starts_with('N')
-#  )
 ```
 
-```{python select, handout = 0}
-cbp4.head()
-#test=cbp.filter(regex='^N',axis=1) | cbp.filter(items=['FIPS','NAICS'],axis=1)
-
-#cbp.filter(items=['FIPS','NAICS'],axis=1)
-#cbp4.head()
-
-#cbp[['FIPS','NAICS'] | ,axis=1)
-#cbp4.head()
-
-#cbp <- cbp %>%
-#  select(
-#    FIPS,
-#    NAICS,
-#   starts_with('N')
-#  )
-#test.columns
-
-```

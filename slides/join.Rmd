@@ -162,11 +162,16 @@ are automically combined into a data frame.
 
 ===
 
-```{r handout = 0}
-cbp <- cbp %>%
-  group_by(FIPS, Sector) %>%
+```{python handout = 0}
+#cbp <- cbp %>%
+#  group_by(FIPS, Sector) %>%
+#  select(starts_with('N'), -NAICS) %>%
+#  summarize_all(sum)
+
+cbp = cbp.groupby(['FIPS', 'Sector') %>%
   select(starts_with('N'), -NAICS) %>%
   summarize_all(sum)
+
 ```
 
 The "combine" part of "split-apply-combine" occurs automatically, when the
