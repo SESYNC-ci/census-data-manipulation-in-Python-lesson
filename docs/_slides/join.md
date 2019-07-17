@@ -13,14 +13,9 @@ across multiple NAICS codes representing a single industry sector.
 
 
 ~~~python
-#sector <- fread(
-#  'data/ACS/sector_naics.csv',
-#  colClasses = c(NAICS='character'))
-#sector =  pd.read_csv(
-#  'data/ACS/sector_naics.csv',
-#  dtype = {"NAICS": np.str})
+
 sector =  pd.read_csv(
-  '/nfs/public-data/training/ACS/sector_naics.csv',
+  'data/ACS/sector_naics.csv',
   dtype = {"NAICS": np.int64})
 print(sector.dtypes)
 ~~~
@@ -178,7 +173,6 @@ dtype: object
 
 ~~~python
 > sector.head()
-+ #print(sector.shape)
 ~~~
 {:title="Console" .input}
 
@@ -206,21 +200,13 @@ solution of re-aggregating data at the "lower resolution".
 
 ### Many-to-One
 
+Before performing the join operation, some preprocessing is necessary to extract from the NAICS columns the first two digits matching the sector identifiers.
+
 
 
 ~~~python
 
-#cbp = pd.read_csv(
-#  'data/cbp15co.csv',
- # na_values = "NULL",
- # keep_default_na=False,
-#  dtype = {"FIPSTATE": np.str, "FIPSCTY": np.str}
-#  )
-
-#cbp <- cbp %>%
-#  inner_join(sector)
-#cbp.head()
-logical_idx = cbp['NAICS'].str.match('[0-9]{2}----')
+logical_idx = cbp['NAICS'].str.match('[0-9]{2}----') #boolean index
 cbp = cbp.loc[logical_idx]
 cbp.head()
 ~~~
@@ -242,8 +228,6 @@ cbp.head()
 
 ~~~python
 cbp.shape
-
-#print(cbp.NAICS)
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
@@ -255,8 +239,7 @@ cbp.shape
 
 
 ~~~python
-cbp['NAICS']= cbp.NAICS.apply(lambda x: np.int64(x[0:2]))
-#print(cbp['NAICS'][0:1][0:2])
+cbp['NAICS']= cbp.NAICS.apply(lambda x: np.int64(x[0:2])) # select first two digits
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
@@ -265,19 +248,8 @@ cbp['NAICS']= cbp.NAICS.apply(lambda x: np.int64(x[0:2]))
 
 ~~~python
 > #Many to one to join economic sector code to NAICS
-+ print
-~~~
-{:title="Console" .input}
-
-
-~~~
-<built-in function print>
-~~~
-{:.output}
-
-
-~~~python
-> cbp_test = cbp.merge(sector, on = "NAICS")
++ 
++ cbp_test = cbp.merge(sector, on = "NAICS")
 + print(cbp_test.shape)
 ~~~
 {:title="Console" .input}
@@ -384,28 +356,17 @@ in each size class *aggregated within* each county and industry sector.
 
 ===
 
-The pandas function `group_by` begins the process by indicating how the data
+The pandas function `groupby` begins the process by indicating how the data
 frame should be split into subsets.
 
 
 
 ~~~python
-#cbp_grouped <- cbp %>%
-#  group_by(FIPS, Sector)
-
-#cbp["FIPSTATE"]= cbp["FIPSTATE"].astype(str)
-#cbp["FIPSCTY"]= cbp["FIPSCTY"].astype(str)
 
 cbp["FIPS"] = cbp["FIPSTATE"]+cbp["FIPSCTY"]
+cbp = cbp.merge(sector, on = "NAICS")
 
-cbp_test = cbp.merge(sector, on = "NAICS")
-#print(cbp_test.shape)
-#cbp_test.head()
-#cbp_test.columns
-
-cbp_grouped = cbp_test.groupby(['FIPS','Sector'])
-#cbp_grouped = cbp.groupby(['Sector'])
-
+cbp_grouped = cbp.groupby(['FIPS','Sector'])
 cbp_grouped
 
 ~~~
@@ -413,7 +374,7 @@ cbp_grouped
 
 
 ~~~
-<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f195b413e48>
+<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f01685c5400>
 ~~~
 {:.output}
 
@@ -501,9 +462,8 @@ FIPS  Sector                                                       ...
 {:.output}
 
 
-The `group_by` statement does not change any values in the data frame; it only
-adds attributes to the the original data frame. You can add multiple variables
-(separated by commas) in `group_by`; each distinct combination of values across
+The `groupby` statement generates a groupby data frame. You can add multiple variables
+(separated by commas) in `groupby`; each distinct combination of values across
 these columns defines a different group.
 {:.notes}
 
@@ -512,7 +472,7 @@ these columns defines a different group.
 ## Summarize
 
 The operation to perform on each group is summing: we need to sum the number of
-establishments in each group. Using [dplyr](){:.rlib} functions, the summaries
+establishments in each group. Using [pandas](){:.rlib} functions, the summaries
 are automically combined into a data frame.
 
 ===
@@ -520,16 +480,15 @@ are automically combined into a data frame.
 
 
 ~~~python
-#cbp <- cbp %>%
-#  group_by(FIPS, Sector) %>%
-#  select(starts_with('N'), -NAICS) %>%
-#  summarize_all(sum)
 
-test43 = (cbp_test.groupby(['FIPS', 'Sector']) 
-                  .agg('sum')
-                  .filter(regex='^N')
-                  .drop(columns=['NAICS']))
-test43.head(5)
+grouped_df = (cbp
+.groupby(['FIPS', 'Sector']) 
+.agg('sum')
+.filter(regex='^N')
+.drop(columns=['NAICS'])
+)
+
+grouped_df.head(5)
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
@@ -565,63 +524,4 @@ the combination of FIPS and Sector as the primary key for both tables.
 
 
 
-~~~python
-#acs_cbp <- cbp %>%
-#  inner_join(acs)
-#acs_cbp = test43.merge(acs)
-#print(acs_cbp.shape)
-print(test43.shape)
-~~~
-{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
-
-
-~~~
-(56704, 13)
-~~~
-{:.output}
-
-
-~~~python
-print(acs.shape)
-~~~
-{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
-
-
-~~~
-(59698, 4)
-~~~
-{:.output}
-
-
-~~~python
-acs_cbp = test43.merge(acs,on='FIPS')
-print(acs_cbp.shape)
-~~~
-{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
-
-
-~~~
-(1061416, 17)
-~~~
-{:.output}
-
-
-Again, however, the one-to-one relationship does not mean all rows are preserved
-by the join. The specific nature of the `inner_join` is to keep all rows, even
-duplicating rows if the relationship is many-to-one, where there are matching
-values in both tables, and discarding the rest.
-{:.notes}
-
-===
-
-The `acs_cbp` table now includes the `median_income` variable from the ACS and
-appropriatey aggregated establishment size information (the number of
-establishments by employee bins) from the CBP table.
-
-
-
-~~~python
-> acs_cbp
-~~~
-{:title="Console" .no-eval .input}
 

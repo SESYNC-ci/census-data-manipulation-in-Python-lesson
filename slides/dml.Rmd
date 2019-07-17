@@ -60,13 +60,9 @@ the result as a new column of the same length.
 
 ===
 
-Here's one you've probably needed before:
+Here are two ways to create a new column using `assign` and the `[ ]` operators.
 
 ```{python, handout = 0}
-#cbp3["FIPS2"] = cbp3["FIPSTATE"].str.cat(["FIPSCTY"])
-#cbp3["FIPSTATE"]= cbp3["FIPSTATE"].astype(str)
-#cbp3["FIPSCTY"]= cbp3["FIPSCTY"].astype(str)
-cbp3.dtypes
 cbp3["FIPS"] = cbp3["FIPSTATE"]+cbp3["FIPSCTY"]
 cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
 cbp3.shape
@@ -78,9 +74,8 @@ cbp3.head()
 ### Select
 
 
-To keep particular columns of a data frame (rather than filtering rows), use the `select` function with arguments that match column names.
+To keep particular columns of a data frame (rather than filtering rows), use the `filter` or `[ ]` functions with arguments that match column names.
 ```{python}
-#names(cbp)
 cbp2.columns
 ```
 
@@ -89,24 +84,18 @@ cbp2.columns
 One way to "match" is by including complete names, each one you want to keep:
 
 ```{python eval = TRUE}
-#cbp %>%
-#  select(
-#    FIPS,
-#    NAICS,
-#    N1_4, N5_9, N10_19 # a better way?
-#  )
   
 cbp3 = cbp3[['FIPS','NAICS','N1_4', 'N5_9', 'N10_19']] 
 cbp3.head()
+
 ```
 
 ===
 
-Alternatively, we can use other methods to select using match patterns. For instance, select all columns starting with N using or matching 'FIPS' or 'NAICS' pattern wwith the filter command.
+Alternatively, we can use the `filter` to select all columns starting with N or matching with 'FIPS' or 'NAICS' pattern. The `filter` command is useful when chaining methods (or piping operations). 
 
 ```{python select, handout = 0}
 cbp4= cbp.filter(regex='^N|FIPS|NAICS',axis=1) 
-
 cbp4.head()
 ```
 

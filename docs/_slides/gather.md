@@ -95,9 +95,6 @@ Consider survey data on participant's age and income *stored* in a EAV structure
 
 ~~~python
 > 
-+ #import sys
-+ #from io import StringIO
-+ #import pandas as pd
 + from pandas.compat import StringIO, BytesIO
 + 
 + text_string = StringIO("""
@@ -130,4 +127,95 @@ Transform the data with the `pivot` function, which "reverses" a `melt`. These a
 
 
 
+
+~~~python
+> tidy_survey = survey_df.pivot(index='participant',
++                           columns='attr',
++                           values='val')
++ print(tidy_survey.head())
+~~~
+{:title="Console" .input}
+
+
+~~~
+attr          age  income
+participant              
+1            24.0    30.0
+2            57.0    60.0
+3            13.0     NaN
+~~~
+{:.output}
+
+
+~~~python
+> tidy_survey = tidy_survey.reset_index()
++ tidy_survey.columns
+~~~
+{:title="Console" .input}
+
+
+~~~
+Index(['participant', 'age', 'income'], dtype='object', name='attr')
+~~~
+{:.output}
+
+
+~~~python
+> tidy_survey.reset_index()
+~~~
+{:title="Console" .input}
+
+
+~~~
+attr  index  participant   age  income
+0         0            1  24.0    30.0
+1         1            2  57.0    60.0
+2         2            3  13.0     NaN
+~~~
+{:.output}
+
+
+~~~python
+> tidy_survey
+~~~
+{:title="Console" .input}
+
+
+~~~
+attr  participant   age  income
+0               1  24.0    30.0
+1               2  57.0    60.0
+2               3  13.0     NaN
+~~~
+{:.output}
+
+
+<!-- === -->
+
+<!-- Question -->
+<!-- : Why were `attr` and `val` not quoted in the call to `spread`? -->
+
+<!-- Answer -->
+<!-- : {:.fragment} They refer to existing column names. In `gather`, quotes are used -->
+<!-- to create new column names. -->
+
+<!-- === -->
+
+<!-- One difficulty with EAV tables is the nature of missing data; an entire row -->
+<!-- rather than a single cell is missing. Think about what "missing data" could mean -->
+<!-- here---perhaps you can supply a value instead of the `NA` in the previous -->
+<!-- result. -->
+
+<!-- ```{r, handout = 0} -->
+<!-- tidy_survey <- spread(survey, -->
+<!--   key = attr, -->
+<!--   value = val, -->
+<!--   fill = 0) -->
+<!-- ``` -->
+
+<!-- === -->
+
+<!-- ```{r} -->
+<!-- tidy_survey -->
+<!-- ``` -->
 

@@ -34,7 +34,6 @@ cbp.describe()
 
 ```
 ```{python}
-#str(cbp)
 print(cbp.dtypes)
 ```
 

@@ -31,7 +31,7 @@ median income for individuals working in different industries.
 
 ~~~python
 import pandas as pd
-cbp = pd.read_csv('/nfs/public-data/training/cbp15co.csv')
+cbp = pd.read_csv('data/cbp15co.csv')
 cbp.describe()
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
@@ -39,8 +39,7 @@ cbp.describe()
 
 
 ~~~python
-> #str(cbp)
-+ print(cbp.dtypes)
+> print(cbp.dtypes)
 ~~~
 {:title="Console" .input}
 
@@ -97,7 +96,7 @@ import numpy as np
 import pandas as pd
 
 cbp = pd.read_csv(
-  '/nfs/public-data/training/cbp15co.csv',
+  'data/cbp15co.csv',
   na_values = "NULL",
   keep_default_na=False,
   dtype =  {"FIPSTATE": np.str, 
@@ -125,7 +124,7 @@ The two named "FIPS" columns are now correctly read as strings.
 import pandas as pd
 import numpy as np
 acs =  pd.read_csv(
-  '/nfs/public-data/training/ACS/sector_ACS_15_5YR_S2413.csv',
+  'data/ACS/sector_ACS_15_5YR_S2413.csv',
   dtype = {"FIPS": np.str}
   )
 ~~~

@@ -50,7 +50,7 @@ Consider survey data on participant's age and income *stored* in a EAV structure
 
 ```{python}
 
-from pd.compat import StringIO, BytesIO
+from pandas.compat import StringIO, BytesIO
 
 text_string = StringIO("""
 participant,attr,val

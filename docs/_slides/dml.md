@@ -29,12 +29,9 @@ observations, lets see how many observations are left when we keep only the
 
 ~~~python
 
-
-import pandas as pd
-
+#import pandas as pd
 cbp2 = cbp[cbp['NAICS'].str.contains("----")]
 cbp2 = cbp2[~cbp2.NAICS.str.contains("-----")]
-
 cbp2.head()
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
@@ -67,7 +64,6 @@ which may be a bit more manageable, and streamlines the operations.
 ~~~python
 cbp3 = cbp[cbp['NAICS'].str.contains('[0-9]{2}----')]
 cbp3.head()
-
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
@@ -97,49 +93,8 @@ the result as a new column of the same length.
 
 ===
 
-Here's one you've probably needed before:
+Here are two ways to create a new column using `assign` and the `[ ]` operators.
 
-
-
-~~~python
-#cbp3["FIPS2"] = cbp3["FIPSTATE"].str.cat(["FIPSCTY"])
-#cbp3["FIPSTATE"]= cbp3["FIPSTATE"].astype(str)
-#cbp3["FIPSCTY"]= cbp3["FIPSCTY"].astype(str)
-cbp3.dtypes
-~~~
-{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
-
-
-~~~
-FIPSTATE    object
-FIPSCTY     object
-NAICS       object
-EMPFLAG     object
-EMP_NF      object
-EMP          int64
-QP1_NF      object
-QP1          int64
-AP_NF       object
-AP           int64
-EST          int64
-N1_4         int64
-N5_9         int64
-N10_19       int64
-N20_49       int64
-N50_99       int64
-N100_249     int64
-N250_499     int64
-N500_999     int64
-N1000        int64
-N1000_1      int64
-N1000_2      int64
-N1000_3      int64
-N1000_4      int64
-CENSTATE     int64
-CENCTY       int64
-dtype: object
-~~~
-{:.output}
 
 
 ~~~python
@@ -269,12 +224,11 @@ cbp3.head()
 ### Select
 
 
-To keep particular columns of a data frame (rather than filtering rows), use the `select` function with arguments that match column names.
+To keep particular columns of a data frame (rather than filtering rows), use the `filter` or `[ ]` functions with arguments that match column names.
 
 
 ~~~python
-> #names(cbp)
-+ cbp2.columns
+> cbp2.columns
 ~~~
 {:title="Console" .input}
 
@@ -296,13 +250,7 @@ One way to "match" is by including complete names, each one you want to keep:
 
 
 ~~~python
-> #cbp %>%
-+ #  select(
-+ #    FIPS,
-+ #    NAICS,
-+ #    N1_4, N5_9, N10_19 # a better way?
-+ #  )
-+   
+>   
 + cbp3 = cbp3[['FIPS','NAICS','N1_4', 'N5_9', 'N10_19']] 
 + cbp3.head()
 ~~~
@@ -322,13 +270,12 @@ One way to "match" is by including complete names, each one you want to keep:
 
 ===
 
-Alternatively, we can use other methods to select using match patterns. For instance, select all columns starting with N using or matching 'FIPS' or 'NAICS' pattern wwith the filter command.
+Alternatively, we can use the `filter` to select all columns starting with N or matching with 'FIPS' or 'NAICS' pattern. The `filter` command is useful when chaining methods (or piping operations). 
 
 
 
 ~~~python
 cbp4= cbp.filter(regex='^N|FIPS|NAICS',axis=1) 
-
 cbp4.head()
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
