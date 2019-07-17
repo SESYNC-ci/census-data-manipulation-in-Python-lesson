@@ -76,24 +76,17 @@ Here's one you've probably needed before:
 #cbp3["FIPSCTY"]= cbp3["FIPSCTY"].astype(str)
 cbp3.dtypes
 cbp3["FIPS"] = cbp3["FIPSTATE"]+cbp3["FIPSCTY"]
-#cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
+cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
 cbp3.shape
-#cbp3.head()
+cbp3.head()
 ```
 
-===
-Multiple arguments to `mutate` produce multiple transformations.
-```{python}
-#cbp5 = cbp2.assign(FIPS=lambda x: x['FIPSTATE']+x['FIPSCTY'],NAICS = cbp2['NAICS'].str.replace('-+',''))
-#cbp5.head()
-```
 ===
 
 ### Select
 
-To keep particular columns of a data frame (rather than filtering rows), use
-the `select` function with arguments that match column names.
 
+To keep particular columns of a data frame (rather than filtering rows), use the `select` function with arguments that match column names.
 ```{python}
 #names(cbp)
 cbp2.columns
@@ -103,7 +96,7 @@ cbp2.columns
 
 One way to "match" is by including complete names, each one you want to keep:
 
-```{python eval = True}
+```{python eval = TRUE}
 #cbp %>%
 #  select(
 #    FIPS,
@@ -111,7 +104,7 @@ One way to "match" is by including complete names, each one you want to keep:
 #    N1_4, N5_9, N10_19 # a better way?
 #  )
   
-cbp3 = cbp2[['FIPS','NAICS','N1_4', 'N5_9', 'N10_19']] 
+cbp3 = cbp3[['FIPS','NAICS','N1_4', 'N5_9', 'N10_19']] 
 cbp3.head()
 ```
 

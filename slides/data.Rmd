@@ -28,11 +28,13 @@ median income for individuals working in different industries.
 ===
 
 ```{python read_data, handout = 0, results = 'hide'}
+#remember to simlink:
+#ln -s /nfs/public-data/training data
 
 #library(data.table)
 #cbp <- fread('data/cbp15co.csv')
 import pandas as pd
-cbp = pd.read_csv('data/training/cbp15co.csv')
+cbp = pd.read_csv('/nfs/public-data/training/cbp15co.csv')
 cbp.describe()
 
 ```
@@ -64,7 +66,7 @@ import numpy as np
 import pandas as pd
 
 cbp = pd.read_csv(
-  'data/cbp15co.csv',
+  '/nfs/public-data/training/cbp15co.csv',
   na_values = "NULL",
   keep_default_na=False,
   dtype =  {"FIPSTATE": np.str, "FIPSCTY": np.str}
@@ -88,7 +90,7 @@ The two named "FIPS" columns are now correctly read as strings.
 import pandas as pd
 import numpy as np
 acs =  pd.read_csv(
-  'data/ACS/sector_ACS_15_5YR_S2413.csv',
+  '/nfs/public-data/training/ACS/sector_ACS_15_5YR_S2413.csv',
   dtype = {"FIPS": np.str}
   )
 ```

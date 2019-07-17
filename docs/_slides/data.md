@@ -30,11 +30,13 @@ median income for individuals working in different industries.
 
 
 ~~~python
+#remember to simlink:
+#ln -s /nfs/public-data/training data
 
 #library(data.table)
 #cbp <- fread('data/cbp15co.csv')
 import pandas as pd
-cbp = pd.read_csv('data/training/cbp15co.csv')
+cbp = pd.read_csv('/nfs/public-data/training/cbp15co.csv')
 cbp.describe()
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
@@ -105,7 +107,7 @@ import numpy as np
 import pandas as pd
 
 cbp = pd.read_csv(
-  'data/cbp15co.csv',
+  '/nfs/public-data/training/cbp15co.csv',
   na_values = "NULL",
   keep_default_na=False,
   dtype =  {"FIPSTATE": np.str, "FIPSCTY": np.str}
@@ -128,5 +130,42 @@ The two named "FIPS" columns are now correctly read as strings.
 
 
 
+~~~python
+import pandas as pd
+import numpy as np
+acs =  pd.read_csv(
+  '/nfs/public-data/training/ACS/sector_ACS_15_5YR_S2413.csv',
+  dtype = {"FIPS": np.str}
+  )
+~~~
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+
+Now let's display the data types
 
 
+~~~python
+> #acs.dtypes
++ print(acs.dtypes)
+~~~
+{:title="Console" .input}
+
+
+~~~
+FIPS              object
+County            object
+Sector            object
+median_income    float64
+dtype: object
+~~~
+{:.output}
+
+
+===
+
+The two datasets both contain economic variables for each U.S. county and
+specified by different categories of industry. The data could potentially be
+manipulated into a single table reflecting the follow statistical model.
+
+$$
+median\_income \sim industry + establishment\_size
+$$
