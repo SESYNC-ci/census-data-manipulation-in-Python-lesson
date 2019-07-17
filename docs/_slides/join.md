@@ -374,7 +374,7 @@ cbp_grouped
 
 
 ~~~
-<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f01685c5400>
+<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7ff60a3ff470>
 ~~~
 {:.output}
 
@@ -386,8 +386,7 @@ At this point, nothing has really changed:
 
 
 ~~~python
-> #str(cbp_grouped)
-+ cbp_grouped.dtypes
+> cbp_grouped.dtypes
 ~~~
 {:title="Console" .input}
 
@@ -524,4 +523,59 @@ the combination of FIPS and Sector as the primary key for both tables.
 
 
 
+~~~python
+print(grouped_df.shape)
+~~~
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+
+
+~~~
+(56704, 13)
+~~~
+{:.output}
+
+
+~~~python
+print(acs.shape)
+~~~
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+
+
+~~~
+(59698, 4)
+~~~
+{:.output}
+
+
+~~~python
+acs_cbp = grouped_df.merge(acs,on='FIPS',)
+print(acs_cbp.shape)
+~~~
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+
+
+~~~
+(1061416, 17)
+~~~
+{:.output}
+
+
+Again, however, the one-to-one relationship does not mean all rows are preserved
+by the join. The specific nature of the `inner_join` is to keep all rows, even
+duplicating rows if the relationship is many-to-one, where there are matching
+values in both tables, and discarding the rest.
+{:.notes}
+
+===
+
+The `acs_cbp` table now includes the `median_income` variable from the ACS and
+appropriatey aggregated establishment size information (the number of
+establishments by employee bins) from the CBP table.
+
+
+
+~~~python
+> acs_cbp
+~~~
+{:title="Console" .no-eval .input}
 
