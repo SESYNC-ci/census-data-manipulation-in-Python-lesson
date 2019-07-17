@@ -413,7 +413,7 @@ cbp_grouped
 
 
 ~~~
-<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f65a71303c8>
+<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f41c4c7ea90>
 ~~~
 {:.output}
 

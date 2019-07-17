@@ -5,9 +5,7 @@
 
 The pandas package’s melt function reshapes “wide” data frames into “long” ones.
 
-https://datascience.stackexchange.com/questions/10478/is-there-any-data-tidying-tool-for-python-pandas-similar-to-r-tidyr-tool
-
-```{python,echo=TRUE}
+```{python}
 import pandas as pd
 import numpy as np
 trial_df = pd.DataFrame({"block": [1,2,3],
@@ -35,7 +33,7 @@ Remember that the exact state of “tidy” may depend on the analysis: the key 
 
 Consider survey data on participant’s age and income stored in a EAV structure.
 
-```{python,echo=TRUE}
+```{python}
 
 df2 = tidy_trial_df.pivot(index='block',
                           columns='treatment',
@@ -50,7 +48,7 @@ df2
 
 Consider survey data on participant's age and income *stored* in a EAV structure.
 
-```{python, echo = TRUE}
+```{python}
 
 #import sys
 #from io import StringIO
@@ -74,7 +72,7 @@ survey_df
 Transform the data with the `pivot` function, which "reverses" a `melt`. These are equivalent to `spread` and `gather` in dplyr r package.
 
 
-```{python, echo=TRUE}
+```{python}
 tidy_survey = survey_df.pivot(index='participant',
                           columns='attr',
                           values='val')
