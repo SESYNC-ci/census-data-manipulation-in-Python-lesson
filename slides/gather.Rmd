@@ -50,10 +50,7 @@ Consider survey data on participant's age and income *stored* in a EAV structure
 
 ```{python}
 
-#import sys
-#from io import StringIO
-#import pandas as pd
-from pandas.compat import StringIO, BytesIO
+from pd.compat import StringIO, BytesIO
 
 text_string = StringIO("""
 participant,attr,val
@@ -82,8 +79,6 @@ tidy_survey.columns
 tidy_survey.reset_index()
 
 tidy_survey
-
-#https://stmorse.github.io/journal/tidyverse-style-pandas.html
 
 ```
 

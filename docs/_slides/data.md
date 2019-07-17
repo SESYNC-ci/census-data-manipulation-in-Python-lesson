@@ -92,12 +92,7 @@ not-available or missing.
 
 
 ~~~python
-#cbp <- fread(
-#  'data/cbp15co.csv',
-#  na.strings = NULL,
-#  colClasses = c(
-#    FIPSTATE='character',
-#    FIPSCTY='character'))
+
 import numpy as np
 import pandas as pd
 
@@ -105,7 +100,8 @@ cbp = pd.read_csv(
   '/nfs/public-data/training/cbp15co.csv',
   na_values = "NULL",
   keep_default_na=False,
-  dtype =  {"FIPSTATE": np.str, "FIPSCTY": np.str}
+  dtype =  {"FIPSTATE": np.str, 
+  "FIPSCTY": np.str}
   )
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
@@ -117,7 +113,7 @@ Question
 : What changed?
 
 Answer
-: {:.fragment} Using `str()` shows that the character string `""` in the CSV
+: {:.fragment} Using `dtypes()` shows that the character string `""` in the CSV
 file is no longer read into R as missing data (an `NA`) but as an empty string.
 The two named "FIPS" columns are now correctly read as strings.
 
