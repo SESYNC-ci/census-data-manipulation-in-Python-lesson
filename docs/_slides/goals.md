@@ -14,20 +14,14 @@
 
 * Reshape data frames with pandas
 * Summarize data by groups with pandas
-* Combine multiple data frame operations with pipes
+* Combine multiple data frame operations with method chaining (piping with pandas ".")
 * Combine multiple data frames with “joins” (merge)
 
-Data frames occupy a central place in Python data analysis pipelines. The panda package provide the objects and most necessary tools to subset, reformat and transform data frames. The key functions in both packages have close counterparts in SQL (Structured Query Language), which provides the added bonus of facilitating translation between python and relational databases.
-
-https://cyberhelp.sesync.org/census-data-manipulation-in-R-lesson/
-Make sure you have run the simlink:
-```sh
-ln -s /nfs/public-data/training data
-```
+Data frames occupy a central place in Python data analysis pipelines. The pandas package provides the objects and most necessary tools to subset, reformat and transform data frames. The key functions in both packages have close counterparts in SQL (Structured Query Language), which provides the added bonus of facilitating translation between python and relational databases.
 
 ## Tidy Concept
 
-Most time is spent on cleaning and wrangling data rather than analysis. In 2014, Hadley Wickam (R developer at RStudio) published a paper that defines the concepts underlying tidy datasets. Hadley Wick as those where:
+Most time is spent on cleaning and wrangling data rather than analysis. In 2014, Hadley Wickam (R developer at RStudio) published a paper that defines the concepts underlying tidy datasets. Hadley Wickam defined tidy datasets as those where:
 
 - each variable forms a column (also called field)
 - each observation forms a row

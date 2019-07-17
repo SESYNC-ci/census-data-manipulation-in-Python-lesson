@@ -11,7 +11,7 @@
 
 ===
 
-To learn about data transformation with dplyr, we need more data. The Census
+To learn about data transformation with pandas, we need more data. The Census
 Bureau collects subnational economic data for the U.S., releasing annual [County
 Business Patterns (CBP)] datasets including the number of establishments,
 employment, and payroll by industry. They also conduct the [American Community
@@ -28,11 +28,6 @@ median income for individuals working in different industries.
 ===
 
 ```{python read_data, handout = 0, results = 'hide'}
-#remember to simlink:
-#ln -s /nfs/public-data/training data
-
-#library(data.table)
-#cbp <- fread('data/cbp15co.csv')
 import pandas as pd
 cbp = pd.read_csv('/nfs/public-data/training/cbp15co.csv')
 cbp.describe()
@@ -56,12 +51,7 @@ along with what string in this CSV file represents NAs, a.k.a. data that is
 not-available or missing.
 
 ```{python read_data_na, handout = 0, results = 'hide'}
-#cbp <- fread(
-#  'data/cbp15co.csv',
-#  na.strings = NULL,
-#  colClasses = c(
-#    FIPSTATE='character',
-#    FIPSCTY='character'))
+
 import numpy as np
 import pandas as pd
 
@@ -69,7 +59,8 @@ cbp = pd.read_csv(
   '/nfs/public-data/training/cbp15co.csv',
   na_values = "NULL",
   keep_default_na=False,
-  dtype =  {"FIPSTATE": np.str, "FIPSCTY": np.str}
+  dtype =  {"FIPSTATE": np.str, 
+  "FIPSCTY": np.str}
   )
 
 ```
@@ -80,7 +71,7 @@ Question
 : What changed?
 
 Answer
-: {:.fragment} Using `str()` shows that the character string `""` in the CSV
+: {:.fragment} Using `dtypes()` shows that the character string `""` in the CSV
 file is no longer read into R as missing data (an `NA`) but as an empty string.
 The two named "FIPS" columns are now correctly read as strings.
 

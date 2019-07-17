@@ -11,7 +11,7 @@
 
 ===
 
-To learn about data transformation with dplyr, we need more data. The Census
+To learn about data transformation with pandas, we need more data. The Census
 Bureau collects subnational economic data for the U.S., releasing annual [County
 Business Patterns (CBP)] datasets including the number of establishments,
 employment, and payroll by industry. They also conduct the [American Community
@@ -30,11 +30,6 @@ median income for individuals working in different industries.
 
 
 ~~~python
-#remember to simlink:
-#ln -s /nfs/public-data/training data
-
-#library(data.table)
-#cbp <- fread('data/cbp15co.csv')
 import pandas as pd
 cbp = pd.read_csv('/nfs/public-data/training/cbp15co.csv')
 cbp.describe()

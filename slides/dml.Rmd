@@ -8,12 +8,9 @@
 | `query`    | keep rows that satisfy conditions                  |
 | `assign`    | apply a transformation to existing [split] columns |
 | `['col1', 'col2']`| select and keep columns with matching names    |
-| `inner_join`| merge columns from separate tables into one table  |
-| `group_by`  | split data into groups by an existing factor       |
-| `group_by.agg` | summarize across rows [and combine split groups]   |
-
-https://pandas.pydata.org/pandas-docs/stable/getting_started/comparison/comparison_with_r.html
-
+| `merge`| merge columns from separate tables into one table  |
+| `groupby`  | split data into groups by an existing factor       |
+| `agg` | summarize across rows to use after groupby [and combine split groups]   |
 
 The table above summarizes the most commonly used functions in
 [pandas](){:.rlib}, which we will demonstrate in turn on data from the U.S.
