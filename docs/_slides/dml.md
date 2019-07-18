@@ -228,9 +228,9 @@ To keep particular columns of a data frame (rather than filtering rows), use the
 
 
 ~~~python
-> cbp2.columns
+cbp2.columns
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -250,11 +250,11 @@ One way to "match" is by including complete names, each one you want to keep:
 
 
 ~~~python
->   
-+ cbp3 = cbp3[['FIPS','NAICS','N1_4', 'N5_9', 'N10_19']] 
-+ cbp3.head()
+  
+cbp3 = cbp3[['FIPS','NAICS','N1_4', 'N5_9', 'N10_19']] 
+cbp3.head()
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -270,7 +270,7 @@ One way to "match" is by including complete names, each one you want to keep:
 
 ===
 
-Alternatively, we can use the `filter` to select all columns starting with N or matching with 'FIPS' or 'NAICS' pattern. The `filter` command is useful when chaining methods (or piping operations). 
+Alternatively, we can use the `filter` function to select all columns starting with N or matching with 'FIPS' or 'NAICS' pattern. The `filter` command is useful when chaining methods (or piping operations). 
 
 
 

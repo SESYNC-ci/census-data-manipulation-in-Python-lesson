@@ -33,7 +33,7 @@ cbp = pd.read_csv('data/cbp15co.csv')
 cbp.describe()
 
 ```
-```{python}
+```{python data_structure, handout = 0}
 print(cbp.dtypes)
 ```
 
@@ -76,7 +76,7 @@ The two named "FIPS" columns are now correctly read as strings.
 
 ===
 
-```{python handout = 0, results = 'hide'}
+```{python readingin, handout = 0, results = 'hide'}
 import pandas as pd
 import numpy as np
 acs =  pd.read_csv(
@@ -85,7 +85,7 @@ acs =  pd.read_csv(
   )
 ```
 Now let's display the data types
-```{python,echo=TRUE}
+```{python, handout = 0, echo=TRUE}
 #acs.dtypes
 print(acs.dtypes)
 ```

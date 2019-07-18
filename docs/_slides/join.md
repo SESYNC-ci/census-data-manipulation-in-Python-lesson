@@ -146,9 +146,9 @@ cbp.head()
 
 
 ~~~python
-> print(sector.dtypes)
+print(sector.dtypes)
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -160,9 +160,9 @@ dtype: object
 
 
 ~~~python
-> print(sector.shape) #24 economic sectors
+print(sector.shape) #24 economic sectors
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -172,9 +172,9 @@ dtype: object
 
 
 ~~~python
-> sector.head()
+sector.head()
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -247,12 +247,12 @@ cbp['NAICS']= cbp.NAICS.apply(lambda x: np.int64(x[0:2])) # select first two dig
 
 
 ~~~python
-> #Many to one to join economic sector code to NAICS
-+ 
-+ cbp_test = cbp.merge(sector, on = "NAICS", how='inner')
-+ cbp_test.head()
+#Many to one to join economic sector code to NAICS
+
+cbp_test = cbp.merge(sector, on = "NAICS", how='inner')
+cbp_test.head()
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -269,9 +269,9 @@ cbp['NAICS']= cbp.NAICS.apply(lambda x: np.int64(x[0:2])) # select first two dig
 
 
 ~~~python
-> print(cbp_test.shape)
+print(cbp_test.shape)
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -330,7 +330,7 @@ cbp_grouped
 
 
 ~~~
-<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f17323da6a0>
+<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f8b2a7549b0>
 ~~~
 {:.output}
 
@@ -531,7 +531,20 @@ establishments by employee bins) from the CBP table.
 
 
 ~~~python
-> acs_cbp
+acs_cbp.head()
 ~~~
-{:title="Console" .no-eval .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+
+
+~~~
+    FIPS  N1_4  ...                                       Sector  median_income
+0  01001    23  ...     agriculture forestry fishing and hunting        27235.0
+1  01001    23  ...  mining quarrying and oil and gas extraction       102722.0
+2  01001    23  ...                                 construction        31632.0
+3  01001    23  ...                                manufacturing        40233.0
+4  01001    23  ...                              wholesale trade        41656.0
+
+[5 rows x 17 columns]
+~~~
+{:.output}
 

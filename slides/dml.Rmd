@@ -62,7 +62,7 @@ the result as a new column of the same length.
 
 Here are two ways to create a new column using `assign` and the `[ ]` operators.
 
-```{python, handout = 0}
+```{python assigning, handout = 0}
 cbp3["FIPS"] = cbp3["FIPSTATE"]+cbp3["FIPSCTY"]
 cbp3.assign(FIPS2=lambda x: x['FIPSTATE']+x['FIPSCTY'])
 cbp3.shape
@@ -75,7 +75,7 @@ cbp3.head()
 
 
 To keep particular columns of a data frame (rather than filtering rows), use the `filter` or `[ ]` functions with arguments that match column names.
-```{python}
+```{python listingtypes, handout =0 }
 cbp2.columns
 ```
 
@@ -83,7 +83,7 @@ cbp2.columns
 
 One way to "match" is by including complete names, each one you want to keep:
 
-```{python eval = TRUE}
+```{python selection, handout=0, eval = TRUE}
   
 cbp3 = cbp3[['FIPS','NAICS','N1_4', 'N5_9', 'N10_19']] 
 cbp3.head()

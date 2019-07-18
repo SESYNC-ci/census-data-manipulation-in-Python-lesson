@@ -10,7 +10,7 @@ across multiple NAICS codes representing a single industry sector.
 
 ===
 
-```{python handout = 0}
+```{python reading_in, handout = 0}
 
 sector =  pd.read_csv(
   'data/ACS/sector_naics.csv',
@@ -21,7 +21,7 @@ cbp.head()
 cbp.dtypes
 cbp.head()
 ```
-```{python eval = TRUE}
+```{python explore, handout= 0, eval = TRUE}
 print(sector.dtypes)
 print(sector.shape) #24 economic sectors
 sector.head()
@@ -41,7 +41,7 @@ solution of re-aggregating data at the "lower resolution".
 
 Before performing the join operation, some preprocessing is necessary to extract from the NAICS columns the first two digits matching the sector identifiers.
 
-```{python handout = 0}
+```{python many_to_one, handout = 0}
 
 logical_idx = cbp['NAICS'].str.match('[0-9]{2}----') #boolean index
 cbp = cbp.loc[logical_idx]
@@ -51,7 +51,7 @@ cbp['NAICS']= cbp.NAICS.apply(lambda x: np.int64(x[0:2])) # select first two dig
 
 ```
 
-```{python}
+```{python merge, handout= 0}
 #Many to one to join economic sector code to NAICS
 
 cbp_test = cbp.merge(sector, on = "NAICS", how='inner')
@@ -110,7 +110,7 @@ cbp_grouped
 
 At this point, nothing has really changed:
 
-```{python}
+```{python structure, handout=0}
 cbp_grouped.dtypes
 ```
 
@@ -129,7 +129,7 @@ are automically combined into a data frame.
 
 ===
 
-```{python handout = 0}
+```{python groupby, handout = 0}
 
 grouped_df = (cbp
 .groupby(['FIPS', 'Sector']) 
@@ -156,7 +156,7 @@ the combination of FIPS and Sector as the primary key for both tables.
 
 ===
 
-```{python handout = 0}
+```{python combine, handout = 0}
 print(grouped_df.shape)
 print(acs.shape)
 acs_cbp = grouped_df.merge(acs,on='FIPS',)
@@ -176,6 +176,6 @@ The `acs_cbp` table now includes the `median_income` variable from the ACS and
 appropriatey aggregated establishment size information (the number of
 establishments by employee bins) from the CBP table.
 
-```{python eval = FALSE}
-acs_cbp
+```{python results_exploration, handout = 0}
+acs_cbp.head()
 ```

@@ -39,9 +39,9 @@ cbp.describe()
 
 
 ~~~python
-> print(cbp.dtypes)
+print(cbp.dtypes)
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -134,10 +134,10 @@ Now let's display the data types
 
 
 ~~~python
-> #acs.dtypes
-+ print(acs.dtypes)
+#acs.dtypes
+print(acs.dtypes)
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
