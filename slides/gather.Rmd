@@ -5,20 +5,20 @@
 
 The pandas package’s melt function reshapes “wide” data frames into “long” ones.
 
-```{python widetolong , handout = 0, results = 'hide'}
+```{python widetolong , handout = 0}
 import pandas as pd
 import numpy as np
 trial_df = pd.DataFrame({"block": [1,2,3],
               "drug": [0.22,0.12,0.42],
               "control": [0.58,0.98,0.19],
               "placebo": [0.31,0.47,0.40]})
-trial_df
+trial_df.head()
 
 tidy_trial_df = pd.melt(trial_df,
                   id_vars=['block'],
                   var_name='treatment',
                   value_name='response')
-tidy_trial_df
+tidy_trial_df.head()
 
 ```
 

@@ -17,7 +17,7 @@
 * Combine multiple data frame operations with method chaining (piping with pandas ".")
 * Combine multiple data frames with “joins” (merge)
 
-Data frames occupy a central place in Python data analysis pipelines. The pandas package provides the objects and most necessary tools to subset, reformat and transform data frames. The key functions in both packages have close counterparts in SQL (Structured Query Language), which provides the added bonus of facilitating translation between python and relational databases.
+Data frames occupy a central place in Python data analysis pipelines. The pandas package provides the objects and most necessary tools to subset, reformat and transform data frames. The key functions in the package have close counterparts in SQL (Structured Query Language), which provides the added bonus of facilitating translation between python and relational databases.
 
 ## Tidy Concept
 
