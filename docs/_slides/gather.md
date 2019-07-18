@@ -8,25 +8,25 @@ The pandas package’s melt function reshapes “wide” data frames into “lon
 
 
 ~~~python
-> import pandas as pd
-+ import numpy as np
-+ trial_df = pd.DataFrame({"block": [1,2,3],
-+               "drug": [0.22,0.12,0.42],
-+               "control": [0.58,0.98,0.19],
-+               "placebo": [0.31,0.47,0.40]})
-+ trial_df
+import pandas as pd
+import numpy as np
+trial_df = pd.DataFrame({"block": [1,2,3],
+              "drug": [0.22,0.12,0.42],
+              "control": [0.58,0.98,0.19],
+              "placebo": [0.31,0.47,0.40]})
+trial_df
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~python
-> tidy_trial_df = pd.melt(trial_df,
-+                   id_vars=['block'],
-+                   var_name='treatment',
-+                   value_name='response')
-+ tidy_trial_df
+tidy_trial_df = pd.melt(trial_df,
+                  id_vars=['block'],
+                  var_name='treatment',
+                  value_name='response')
+tidy_trial_df
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 All columns, accept for “block”, are stacked in two columns: a “key” and a “value”. The key column gets the name treatment and the value column receives the name response. For each row in the result, the key is taken from the name of the column and the value from the data in the column.
@@ -42,14 +42,14 @@ Consider survey data on participant’s age and income stored in a EAV structure
 
 
 ~~~python
-> 
-+ df2 = tidy_trial_df.pivot(index='block',
-+                           columns='treatment',
-+                           values='response')
-+ df2 = df2.reset_index()
-+ df2.columns
+
+df2 = tidy_trial_df.pivot(index='block',
+                          columns='treatment',
+                          values='response')
+df2 = df2.reset_index()
+df2.columns
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -59,9 +59,9 @@ Index(['block', 'control', 'drug', 'placebo'], dtype='object', name='treatment')
 
 
 ~~~python
-> df2.reset_index()
+df2.reset_index()
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -74,9 +74,9 @@ treatment  index  block  control  drug  placebo
 
 
 ~~~python
-> df2
+df2
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -93,22 +93,22 @@ Consider survey data on participant's age and income *stored* in a EAV structure
 
 
 ~~~python
-> 
-+ from pandas.compat import StringIO, BytesIO
-+ 
-+ text_string = StringIO("""
-+ participant,attr,val
-+ 1,age,24
-+ 2,age,57
-+ 3,age,13
-+ 1,income,30
-+ 2,income,60
-+ """)
-+ 
-+ survey_df = pd.read_csv(text_string, sep=",")
-+ survey_df
+
+from pandas.compat import StringIO, BytesIO
+
+text_string = StringIO("""
+participant,attr,val
+1,age,24
+2,age,57
+3,age,13
+1,income,30
+2,income,60
+""")
+
+survey_df = pd.read_csv(text_string, sep=",")
+survey_df
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -128,12 +128,12 @@ Transform the data with the `pivot` function, which "reverses" a `melt`. These a
 
 
 ~~~python
-> tidy_survey = survey_df.pivot(index='participant',
-+                           columns='attr',
-+                           values='val')
-+ print(tidy_survey.head())
+tidy_survey = survey_df.pivot(index='participant',
+                          columns='attr',
+                          values='val')
+print(tidy_survey.head())
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -147,10 +147,10 @@ participant
 
 
 ~~~python
-> tidy_survey = tidy_survey.reset_index()
-+ tidy_survey.columns
+tidy_survey = tidy_survey.reset_index()
+tidy_survey.columns
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -160,9 +160,9 @@ Index(['participant', 'age', 'income'], dtype='object', name='attr')
 
 
 ~~~python
-> tidy_survey.reset_index()
+tidy_survey.reset_index()
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
@@ -175,9 +175,9 @@ attr  index  participant   age  income
 
 
 ~~~python
-> tidy_survey
+tidy_survey
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~

@@ -62,13 +62,20 @@ Transform the data with the `pivot` function, which "reverses" a `melt`. These a
 ```{python handout = 0}
 #gather(tidy_survey, key = "attr",
 #  value = "val", -participant)
+type(tidy_survey)
+tidy_survey.head(5)
 tidy_survey.columns
 tidy_survey.index
-tidy_survey.dr
-test = tidy_survey.drop(['participant'],columns=True)
-tidy_survey.describe()
+#tidy_survey.dr
+test = tidy_survey.drop(columns=['participant'])
+test.head(5)
+#tidy_survey.describe()
 
-#(tidy_survey.drop('participant')
+test.melt(id_vars='attr',
+          var_name='variable',
+          value_name='val')
+          
+#(tidy_survey.drop(coluumns=['participant'])
 #            .melt(id_vars='attr',
 #                  var_name='variable',
 #                  value_name='val'))
@@ -78,7 +85,7 @@ tidy_survey.describe()
 #                  var_name='treatment',
 #                  value_name='response')
 
-tidy_survey.head(5)
+#tidy_survey.head(5)
 #test.head(5)
 #melt(tidy_survey,
 #     )
