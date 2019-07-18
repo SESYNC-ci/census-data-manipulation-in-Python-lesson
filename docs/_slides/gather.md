@@ -14,7 +14,6 @@ The pandas package’s melt function reshapes “wide” data frames into “lon
 +               "drug": [0.22,0.12,0.42],
 +               "control": [0.58,0.98,0.19],
 +               "placebo": [0.31,0.47,0.40]})
-+ 
 + trial_df
 ~~~
 {:title="Console" .input}

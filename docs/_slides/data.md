@@ -30,11 +30,11 @@ median income for individuals working in different industries.
 
 
 ~~~python
-import pandas as pd
-cbp = pd.read_csv('data/cbp15co.csv')
-cbp.describe()
+> import pandas as pd
++ cbp = pd.read_csv('data/cbp15co.csv')
++ cbp.describe()
 ~~~
-{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
+{:title="Console" .input}
 
 
 

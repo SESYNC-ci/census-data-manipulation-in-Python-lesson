@@ -5,14 +5,13 @@
 
 The pandas package’s melt function reshapes “wide” data frames into “long” ones.
 
-```{python widetolong , results = 'hide'}
+```{python widetolong , handout = 0, results = 'hide'}
 import pandas as pd
 import numpy as np
 trial_df = pd.DataFrame({"block": [1,2,3],
               "drug": [0.22,0.12,0.42],
               "control": [0.58,0.98,0.19],
               "placebo": [0.31,0.47,0.40]})
-
 trial_df
 
 tidy_trial_df = pd.melt(trial_df,
@@ -33,7 +32,7 @@ Remember that the exact state of “tidy” may depend on the analysis: the key 
 
 Consider survey data on participant’s age and income stored in a EAV structure.
 
-```{python longtowide}
+```{python longtowide,handout = 0}
 
 df2 = tidy_trial_df.pivot(index='block',
                           columns='treatment',
@@ -48,7 +47,7 @@ df2
 
 Consider survey data on participant's age and income *stored* in a EAV structure.
 
-```{python inputEAV}
+```{python inputEAV,handout = 0}
 
 from pandas.compat import StringIO, BytesIO
 
@@ -69,7 +68,7 @@ survey_df
 Transform the data with the `pivot` function, which "reverses" a `melt`. These are equivalent to `spread` and `gather` in the dplyr r package.
 
 
-```{python pivot}
+```{python pivot,handout = 0}
 tidy_survey = survey_df.pivot(index='participant',
                           columns='attr',
                           values='val')
