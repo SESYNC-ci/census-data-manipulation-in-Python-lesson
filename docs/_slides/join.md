@@ -330,7 +330,7 @@ cbp_grouped
 
 
 ~~~
-<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f8b2a7549b0>
+<pandas.core.groupby.generic.DataFrameGroupBy object at 0x7fc3056ab4e0>
 ~~~
 {:.output}
 
@@ -342,9 +342,9 @@ At this point, nothing has really changed:
 
 
 ~~~python
-> cbp_grouped.dtypes
+cbp_grouped.dtypes
 ~~~
-{:title="Console" .input}
+{:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
 
 ~~~
