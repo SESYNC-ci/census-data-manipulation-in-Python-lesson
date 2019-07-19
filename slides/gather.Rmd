@@ -81,32 +81,3 @@ tidy_survey
 
 ```
 
-<!-- === -->
-
-<!-- Question -->
-<!-- : Why were `attr` and `val` not quoted in the call to `spread`? -->
-
-<!-- Answer -->
-<!-- : {:.fragment} They refer to existing column names. In `gather`, quotes are used -->
-<!-- to create new column names. -->
-
-<!-- === -->
-
-<!-- One difficulty with EAV tables is the nature of missing data; an entire row -->
-<!-- rather than a single cell is missing. Think about what "missing data" could mean -->
-<!-- here---perhaps you can supply a value instead of the `NA` in the previous -->
-<!-- result. -->
-
-<!-- ```{r, handout = 0} -->
-<!-- tidy_survey <- spread(survey, -->
-<!--   key = attr, -->
-<!--   value = val, -->
-<!--   fill = 0) -->
-<!-- ``` -->
-
-<!-- === -->
-
-<!-- ```{r} -->
-<!-- tidy_survey -->
-<!-- ``` -->
-
