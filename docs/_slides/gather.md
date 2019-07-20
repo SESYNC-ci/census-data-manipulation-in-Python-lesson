@@ -1,9 +1,9 @@
 ---
 ---
 
-## From wide to long
+## Wide to Long
 
-The pandas package’s melt function reshapes “wide” data frames into “long” ones.
+The [pandas](){:.pylib} package’s melt function reshapes “wide” data frames into “long” ones.
 
 
 
@@ -51,7 +51,7 @@ tidy_trial_df.head()
 
 All columns, accept for “block”, are stacked in two columns: a “key” and a “value”. The key column gets the name treatment and the value column receives the name response. For each row in the result, the key is taken from the name of the column and the value from the data in the column.
 
-## From long to wide
+## Long to Wide
 
 Data can also fail to be tidy when a table is too long. The Entity-Attribute-Value (EAV) structure common in large databases distributes multiple attributes of a single entity/observation into separate rows.
 

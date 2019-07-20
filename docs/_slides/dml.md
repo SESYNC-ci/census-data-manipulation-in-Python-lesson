@@ -1,7 +1,7 @@
 ---
 ---
 
-## Typical Data Manipulation Functions
+## Key Functions
 
 | Function    | Returns                                            |
 |-------------+----------------------------------------------------|
@@ -13,7 +13,7 @@
 | `agg` | summarize across rows to use after groupby [and combine split groups]   |
 
 The table above summarizes the most commonly used functions in
-[pandas](){:.rlib}, which we will demonstrate in turn on data from the U.S.
+[pandas](){:.pylib}, which we will demonstrate in turn on data from the U.S.
 Census Bureau.
 {:.notes}
 
@@ -50,8 +50,10 @@ cbp2.head()
 {:.output}
 
 
-Note that a logical we used the function `contains` from pandas to filter the dataset in two steps. The function contains allows for pattern matching of any character within strings. The `~` is used to remove the rows that contains specific patterns.
-
+Note that a logical we used the function `contains` from pandas to filter the
+dataset in two steps. The function contains allows for pattern matching of any
+character within strings. The `~` is used to remove the rows that contains
+specific patterns.
 {:.notes}
 
 ===
@@ -87,7 +89,7 @@ cbp3.head()
 
 ### Altering, updating and transforming columns
 
-The `assign` function is the [pandas](){:.rlib} answer to updating or altering
+The `assign` function is the [pandas](){:.pylib} answer to updating or altering
 your columns. It performs arbitrary operations on existing columns and appends
 the result as a new column of the same length.
 
@@ -223,8 +225,9 @@ cbp3.head()
 
 ### Select
 
+To keep particular columns of a data frame (rather than filtering rows), use the
+`filter` or `[ ]` functions with arguments that match column names.
 
-To keep particular columns of a data frame (rather than filtering rows), use the `filter` or `[ ]` functions with arguments that match column names.
 
 
 ~~~python
@@ -250,7 +253,6 @@ One way to "match" is by including complete names, each one you want to keep:
 
 
 ~~~python
-  
 cbp3 = cbp3[['FIPS','NAICS','N1_4', 'N5_9', 'N10_19']] 
 cbp3.head()
 ~~~

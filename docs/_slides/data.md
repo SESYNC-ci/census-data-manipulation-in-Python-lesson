@@ -5,7 +5,7 @@
 
 ## Sample Data
 
-![]({% include asset.html path="images/data.jpg" %}){: width="50%"}  
+![]({% include asset.html path="images/data.jpg" %}){:width="50%"}  
 *Credit: [US Census Bureau](https://www.census.gov/programs-surveys/cbp.html)*
 {:.captioned}
 
@@ -130,7 +130,9 @@ acs =  pd.read_csv(
 ~~~
 {:title="{{ site.data.lesson.handouts[0] }}" .text-document}
 
+
 Now let's display the data types
+
 
 
 ~~~python

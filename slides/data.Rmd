@@ -5,7 +5,7 @@
 
 ## Sample Data
 
-![]({% include asset.html path="images/data.jpg" %}){: width="50%"}  
+![]({% include asset.html path="images/data.jpg" %}){:width="50%"}  
 *Credit: [US Census Bureau](https://www.census.gov/programs-surveys/cbp.html)*
 {:.captioned}
 
@@ -61,7 +61,6 @@ cbp = pd.read_csv(
   dtype =  {"FIPSTATE": np.str, 
   "FIPSCTY": np.str}
   )
-
 ```
 
 ===
@@ -84,8 +83,10 @@ acs =  pd.read_csv(
   dtype = {"FIPS": np.str}
   )
 ```
+
 Now let's display the data types
-```{python, handout = 0, echo=TRUE}
+
+```{python, handout = 0, echo = TRUE}
 #acs.dtypes
 print(acs.dtypes)
 ```

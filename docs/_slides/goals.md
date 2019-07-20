@@ -1,8 +1,6 @@
 ---
 ---
 
-# MANIPULATING TABULAR DATA
-
 ## Lesson Objectives
 
 * Review what makes a dataset tidy.
