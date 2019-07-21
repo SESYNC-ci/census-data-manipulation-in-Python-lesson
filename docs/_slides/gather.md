@@ -114,7 +114,7 @@ Consider survey data on participant's age and income *stored* in a EAV structure
 
 ~~~python
 
-from pandas.compat import StringIO, BytesIO
+from io import StringIO, BytesIO
 
 text_string = StringIO("""
 participant,attr,val
