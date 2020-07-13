@@ -3,7 +3,7 @@
 #
 ---
 
-## Sample Data
+## Sample Data  
 
 ![]({% include asset.html path="images/data.jpg" %}){:width="50%"}  
 *Credit: [US Census Bureau](https://www.census.gov/programs-surveys/cbp.html)*
