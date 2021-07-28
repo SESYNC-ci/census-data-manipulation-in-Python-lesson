@@ -1,0 +1,1257 @@
+---
+---
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manipulating Tabular Data</title>
+<meta name="description" content="Get your data in shape with pandas.">
+<link rel="canonical"
+      href="https://SESYNC-ci.github.io/census-data-manipulation-in-Python-lesson/index.html">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/SESYNC-ci/lesson-style@3.0/docs/assets/css/default.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/SESYNC-ci/lesson-style@3.0/docs/assets/css/syntax.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/SESYNC-ci/lesson-style@3.0/docs/assets/css/static.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+      rel="stylesheet"
+      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      crossorigin="anonymous">
+
+    
+  </head>
+  <body>
+    <div class="page-content">
+      <div class="wrapper">
+        <h1 style="text-transform: none;" id="manipulating-tabular-data">Manipulating Tabular Data</h1>
+
+<blockquote>
+  <p><em>Note</em>: This lesson is in <a href="https://github.com/SESYNC-ci/sesync-ci.github.io/blob/master/lesson/lesson-lifecycle.md">beta</a> status! It may have issues that have not been addressed.</p>
+</blockquote>
+
+<blockquote>
+  <p>Handouts for this lesson need to be saved on your computer.
+<a href="https://github.com/SESYNC-ci/census-data-manipulation-in-Python-lesson/releases/download/v0.2/handouts.zip">Download</a>
+and unzip this material into the directory (a.k.a. folder) where you plan to work.</p>
+</blockquote>
+
+<nav id="ToC">
+
+  <ul>
+    <li><a href="#/slides/goals">Lesson Objectives</a></li>
+    <li><a href="#/slides/gather">Wide to Long</a></li>
+    <li><a href="#/slides/data">Sample Data</a></li>
+    <li><a href="#/slides/dml">Key Functions</a></li>
+    <li><a href="#/slides/join">Join and Summarize</a></li>
+    <li><a href="#/slides/conclude">Additional Resources</a></li>
+  </ul>
+</nav>
+
+<hr />
+<p><a name="/slides/goals"></a></p>
+
+<section><h2 id="lesson-objectives">Lesson Objectives</h2>
+
+<ul>
+  <li>Review what makes a dataset tidy.</li>
+  <li>Meet a complete set of functions for most table manipulations.</li>
+  <li>Learn to transform datasets with split-apply-combine procedures.</li>
+  <li>Understand the basic join operation.</li>
+</ul>
+
+<h2 id="specific-achievements">Specific Achievements</h2>
+
+<ul>
+  <li>Reshape data frames with pandas</li>
+  <li>Summarize data by groups with pandas</li>
+  <li>Combine multiple data frame operations with method chaining (piping with pandas “.”)</li>
+  <li>Combine multiple data frames with “joins” (merge)</li>
+</ul>
+
+<p>Data frames occupy a central place in Python data analysis pipelines. The pandas package provides the objects and most necessary tools to subset, reformat and transform data frames. The key functions in the package have close counterparts in SQL (Structured Query Language), which provides the added bonus of facilitating translation between python and relational databases.</p>
+
+<h2 id="tidy-concept">Tidy Concept</h2>
+
+<p>Most time is spent on cleaning and wrangling data rather than analysis. In 2014, Hadley Wickam (R developer at RStudio) published a paper that defines the concepts underlying tidy datasets. Hadley Wickam defined tidy datasets as those where:</p>
+
+<ul>
+  <li>each variable forms a column (also called field)</li>
+  <li>each observation forms a row</li>
+  <li>each type of observational unit forms a table</li>
+</ul>
+
+<p>These guidelines may be familiar to some of you—they closely map to best practices for “normalization” in database design.It correspond to the 3rd normal form’s described by Codd 1990 but uses the language of statical analysis rather than relationtional database.</p>
+
+<p>Consider a data set where the outcome of an experiment has been recorded in a perfectly appropriate way:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>bloc</th>
+      <th>drug</th>
+      <th>control</th>
+      <th>placebo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>0.22</td>
+      <td>0.58</td>
+      <td>0.31</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.12</td>
+      <td>0.98</td>
+      <td>0.47</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.42</td>
+      <td>0.19</td>
+      <td>0.40</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The response data are present in a compact matrix, as you might record it on a spreadsheet. The form does not match how we think about a statistical model, such as:</p>
+
+<script type="math/tex; mode=display">response \sim block + treatment</script>
+
+<p>In a tidy format, each row is a complete observation: it includes the response value and all the predictor values. In this data, some of those predictor values are column headers, so the table needs to be reshaped. The pandas package provides functions to help re-organize tables.</p>
+
+<p>The third principle of tidy data, one table per category of observed entities, becomes especially important in synthesis research. Following this principle requires holding tidy data in multiple tables, with associations between them formalized in metadata, as in a relational database.</p>
+
+<p>Datasets split across multiple tables are unavoidable in synthesis research, and commonly used in the following two ways (often in combination):</p>
+
+<ul>
+  <li>two tables are “un-tidied” by joins, or merging them into one table</li>
+  <li>statistical models conform to the data model through a hierarchical structure or employing “random effects”</li>
+</ul>
+
+<p>The pandas package includes several functions that all perform variations on table joins needed to “un-tidy” your tables, but there are only two basic types of table relationships to recognize:</p>
+
+<ul>
+  <li><strong>One-to-one</strong> relationships allow tables to be combined based on the same unique identifier (or “primary key”) in both tables.</li>
+  <li><strong>Many-to-one</strong> relationships require non-unique “foreign keys” in the first table to match the primary key of the second.</li>
+</ul>
+</section>
+
+<p class="ToS"><a href="#/slides/goals">Top of Section</a></p>
+
+<hr />
+<p><a name="/slides/gather"></a></p>
+
+<section><h2 id="wide-to-long">Wide to Long</h2>
+
+<p>The <a href="" class="pylib">pandas</a> package’s melt function reshapes “wide” data frames into “long” ones.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="n">trial_df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">"block"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
+              <span class="s">"drug"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.22</span><span class="p">,</span><span class="mf">0.12</span><span class="p">,</span><span class="mf">0.42</span><span class="p">],</span>
+              <span class="s">"control"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.58</span><span class="p">,</span><span class="mf">0.98</span><span class="p">,</span><span class="mf">0.19</span><span class="p">],</span>
+              <span class="s">"placebo"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.31</span><span class="p">,</span><span class="mf">0.47</span><span class="p">,</span><span class="mf">0.40</span><span class="p">]})</span>
+<span class="n">trial_df</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   block  control  drug  placebo
+0      1     0.58  0.22     0.31
+1      2     0.98  0.12     0.47
+2      3     0.19  0.42     0.40
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">tidy_trial_df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">melt</span><span class="p">(</span><span class="n">trial_df</span><span class="p">,</span>
+                  <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s">'block'</span><span class="p">],</span>
+                  <span class="n">var_name</span><span class="o">=</span><span class="s">'treatment'</span><span class="p">,</span>
+                  <span class="n">value_name</span><span class="o">=</span><span class="s">'response'</span><span class="p">)</span>
+<span class="n">tidy_trial_df</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   block treatment  response
+0      1   control      0.58
+1      2   control      0.98
+2      3   control      0.19
+3      1      drug      0.22
+4      2      drug      0.12
+</code></pre></div></div>
+
+<p>All columns, accept for “block”, are stacked in two columns: a “key” and a “value”. The key column gets the name treatment and the value column receives the name response. For each row in the result, the key is taken from the name of the column and the value from the data in the column.</p>
+
+<h2 id="long-to-wide">Long to Wide</h2>
+
+<p>Data can also fail to be tidy when a table is too long. The Entity-Attribute-Value (EAV) structure common in large databases distributes multiple attributes of a single entity/observation into separate rows.</p>
+
+<p>Remember that the exact state of “tidy” may depend on the analysis: the key is knowing what counts as a complete observation. For example, the community ecology package vegan requires a matrix of species counts, where rows correspond to species and columns to sites. This may seem like too “wide” a format, but in the packages several multi-variate analyses, the abundance of a species across multiple sites is considered a complete observation.</p>
+
+<p>Consider survey data on participant’s age and income stored in a EAV structure.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">tidy_trial_df</span><span class="p">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s">'block'</span><span class="p">,</span>
+                          <span class="n">columns</span><span class="o">=</span><span class="s">'treatment'</span><span class="p">,</span>
+                          <span class="n">values</span><span class="o">=</span><span class="s">'response'</span><span class="p">)</span>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="p">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="n">df2</span><span class="p">.</span><span class="n">columns</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Index(['block', 'control', 'drug', 'placebo'], dtype='object', name='treatment')
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">df2</span><span class="p">.</span><span class="n">reset_index</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>treatment  index  block  control  drug  placebo
+0              0      1     0.58  0.22     0.31
+1              1      2     0.98  0.12     0.47
+2              2      3     0.19  0.42     0.40
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">df2</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>treatment  block  control  drug  placebo
+0              1     0.58  0.22     0.31
+1              2     0.98  0.12     0.47
+2              3     0.19  0.42     0.40
+</code></pre></div></div>
+
+<p>Consider survey data on participant’s age and income <em>stored</em> in a EAV structure.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span><span class="p">,</span> <span class="n">BytesIO</span>
+
+<span class="n">text_string</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="s">"""
+participant,attr,val
+1,age,24
+2,age,57
+3,age,13
+1,income,30
+2,income,60
+"""</span><span class="p">)</span>
+
+<span class="n">survey_df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">text_string</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">","</span><span class="p">)</span>
+<span class="n">survey_df</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   participant    attr  val
+0            1     age   24
+1            2     age   57
+2            3     age   13
+3            1  income   30
+4            2  income   60
+</code></pre></div></div>
+
+<p>Transform the data with the <code class="language-plaintext highlighter-rouge">pivot</code> function, which “reverses” a <code class="language-plaintext highlighter-rouge">melt</code>. These are equivalent to <code class="language-plaintext highlighter-rouge">spread</code> and <code class="language-plaintext highlighter-rouge">gather</code> in the dplyr r package.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">tidy_survey</span> <span class="o">=</span> <span class="n">survey_df</span><span class="p">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s">'participant'</span><span class="p">,</span>
+                          <span class="n">columns</span><span class="o">=</span><span class="s">'attr'</span><span class="p">,</span>
+                          <span class="n">values</span><span class="o">=</span><span class="s">'val'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tidy_survey</span><span class="p">.</span><span class="n">head</span><span class="p">())</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attr          age  income
+participant              
+1            24.0    30.0
+2            57.0    60.0
+3            13.0     NaN
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">tidy_survey</span> <span class="o">=</span> <span class="n">tidy_survey</span><span class="p">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="n">tidy_survey</span><span class="p">.</span><span class="n">columns</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Index(['participant', 'age', 'income'], dtype='object', name='attr')
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">tidy_survey</span><span class="p">.</span><span class="n">reset_index</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attr  index  participant   age  income
+0         0            1  24.0    30.0
+1         1            2  57.0    60.0
+2         2            3  13.0     NaN
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">tidy_survey</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attr  participant   age  income
+0               1  24.0    30.0
+1               2  57.0    60.0
+2               3  13.0     NaN
+</code></pre></div></div>
+
+</section>
+
+<p class="ToS"><a href="#/slides/gather">Top of Section</a></p>
+
+<hr />
+<p><a name="/slides/data"></a></p>
+
+<section><h2 id="sample-data">Sample Data</h2>
+
+<p class="captioned"><img src="https://cdn.jsdelivr.net/gh/SESYNC-ci/census-data-manipulation-in-Python-lesson@v0.2/docs/assets/images/data.jpg" alt="" width="50%" /><br />
+<em>Credit: <a href="https://www.census.gov/programs-surveys/cbp.html">US Census Bureau</a></em></p>
+
+</section>
+
+<section>
+
+<p class="notes">To learn about data transformation with pandas, we need more data. The Census
+Bureau collects subnational economic data for the U.S., releasing annual <a href="https://www.census.gov/programs-surveys/cbp/data/datasets.html">County
+Business Patterns (CBP)</a> datasets including the number of establishments,
+employment, and payroll by industry. They also conduct the <a href="https://www.census.gov/programs-surveys/acs/">American Community
+Survey (ACS)</a> and publish, among other demographic and economic variables, estimates of
+median income for individuals working in different industries.</p>
+
+<ul>
+  <li><a href="https://www.census.gov/programs-surveys/cbp/data/datasets.html">County Business Patterns (CBP)</a></li>
+  <li><a href="https://www.census.gov/programs-surveys/acs/">American Community Survey (ACS)</a></li>
+</ul>
+
+</section>
+
+<section>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="n">cbp</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'data/cbp15co.csv'</span><span class="p">)</span>
+<span class="n">cbp</span><span class="p">.</span><span class="n">describe</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">cbp</span><span class="p">.</span><span class="n">dtypes</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FIPSTATE     int64
+FIPSCTY      int64
+NAICS       object
+EMPFLAG     object
+EMP_NF      object
+EMP          int64
+QP1_NF      object
+QP1          int64
+AP_NF       object
+AP           int64
+EST          int64
+N1_4         int64
+N5_9         int64
+N10_19       int64
+N20_49       int64
+N50_99       int64
+N100_249     int64
+N250_499     int64
+N500_999     int64
+N1000        int64
+N1000_1      int64
+N1000_2      int64
+N1000_3      int64
+N1000_4      int64
+CENSTATE     int64
+CENCTY       int64
+dtype: object
+</code></pre></div></div>
+
+<p class="notes">See the <a href="https://www2.census.gov/programs-surveys/rhfs/cbp/technical%20documentation/2015_record_layouts/county_layout_2015.txt">CBP dataset documentation</a> for an explanation of the variables we don’t
+discuss in this lesson.</p>
+
+</section>
+
+<section>
+
+<p>Modify the import to clean up this read: consider the data type for FIPS codes
+along with what string in this CSV file represents NAs, a.k.a. data that is
+not-available or missing.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">cbp</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span>
+  <span class="s">'data/cbp15co.csv'</span><span class="p">,</span>
+  <span class="n">na_values</span> <span class="o">=</span> <span class="s">"NULL"</span><span class="p">,</span>
+  <span class="n">keep_default_na</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+  <span class="n">dtype</span> <span class="o">=</span>  <span class="p">{</span><span class="s">"FIPSTATE"</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="nb">str</span><span class="p">,</span> 
+  <span class="s">"FIPSCTY"</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="nb">str</span><span class="p">}</span>
+  <span class="p">)</span>
+</code></pre></div></div>
+
+</section>
+
+<section>
+
+<dl>
+  <dt>Question</dt>
+  <dd>What changed?</dd>
+  <dt>Answer</dt>
+  <dd class="fragment">Using <code class="language-plaintext highlighter-rouge">dtypes()</code> shows that the character string <code class="language-plaintext highlighter-rouge">""</code> in the CSV
+file is no longer read into R as missing data (an <code class="language-plaintext highlighter-rouge">NA</code>) but as an empty string.
+The two named “FIPS” columns are now correctly read as strings.</dd>
+</dl>
+
+</section>
+
+<section>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="n">acs</span> <span class="o">=</span>  <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span>
+  <span class="s">'data/ACS/sector_ACS_15_5YR_S2413.csv'</span><span class="p">,</span>
+  <span class="n">dtype</span> <span class="o">=</span> <span class="p">{</span><span class="s">"FIPS"</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="nb">str</span><span class="p">}</span>
+  <span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now let’s display the data types</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="c1">#acs.dtypes
+</span><span class="k">print</span><span class="p">(</span><span class="n">acs</span><span class="p">.</span><span class="n">dtypes</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FIPS              object
+County            object
+Sector            object
+median_income    float64
+dtype: object
+</code></pre></div></div>
+
+</section>
+
+<section>
+
+<p>The two datasets both contain economic variables for each U.S. county and
+specified by different categories of industry. The data could potentially be
+manipulated into a single table reflecting the follow statistical model.</p>
+
+<script type="math/tex; mode=display">median\_income \sim industry + establishment\_size</script>
+</section>
+
+<p class="ToS"><a href="#/slides/data">Top of Section</a></p>
+
+<hr />
+<p><a name="/slides/dml"></a></p>
+
+<section><h2 id="key-functions">Key Functions</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Returns</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">query</code></td>
+      <td>keep rows that satisfy conditions</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">assign</code></td>
+      <td>apply a transformation to existing [split] columns</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">['col1', 'col2']</code></td>
+      <td>select and keep columns with matching names</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">merge</code></td>
+      <td>merge columns from separate tables into one table</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">groupby</code></td>
+      <td>split data into groups by an existing factor</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">agg</code></td>
+      <td>summarize across rows to use after groupby [and combine split groups]</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="notes">The table above summarizes the most commonly used functions in
+<a href="" class="pylib">pandas</a>, which we will demonstrate in turn on data from the U.S.
+Census Bureau.</p>
+
+</section>
+
+<section>
+
+<h3 id="filter-and-pattern-matching">Filter and pattern matching</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">cbp</code> table includes character <code class="language-plaintext highlighter-rouge">NAICS</code> column. Of the 2 million
+observations, lets see how many observations are left when we keep only the
+2-digit NAICS codes, representing high-level sectors of the economy.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code>
+<span class="c1">#import pandas as pd
+</span><span class="n">cbp2</span> <span class="o">=</span> <span class="n">cbp</span><span class="p">[</span><span class="n">cbp</span><span class="p">[</span><span class="s">'NAICS'</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">"----"</span><span class="p">)]</span>
+<span class="n">cbp2</span> <span class="o">=</span> <span class="n">cbp2</span><span class="p">[</span><span class="o">~</span><span class="n">cbp2</span><span class="p">.</span><span class="n">NAICS</span><span class="p">.</span><span class="nb">str</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">"-----"</span><span class="p">)]</span>
+<span class="n">cbp2</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   FIPSTATE FIPSCTY   NAICS EMPFLAG  ... N1000_3  N1000_4 CENSTATE  CENCTY
+1        01     001  11----          ...       0        0       63       1
+10       01     001  21----          ...       0        0       63       1
+17       01     001  22----          ...       0        0       63       1
+27       01     001  23----          ...       0        0       63       1
+93       01     001  31----          ...       0        0       63       1
+
+[5 rows x 26 columns]
+</code></pre></div></div>
+
+<p class="notes">Note that a logical we used the function <code class="language-plaintext highlighter-rouge">contains</code> from pandas to filter the
+dataset in two steps. The function contains allows for pattern matching of any
+character within strings. The <code class="language-plaintext highlighter-rouge">~</code> is used to remove the rows that contains
+specific patterns.</p>
+
+</section>
+
+<section>
+
+<p>Filtering string often uses pattern matching by <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.str.contains.html#pandas.Series.str.contains">regular expressions</a>
+which may be a bit more manageable, and streamlines the operations.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp3</span> <span class="o">=</span> <span class="n">cbp</span><span class="p">[</span><span class="n">cbp</span><span class="p">[</span><span class="s">'NAICS'</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">'[0-9]{2}----'</span><span class="p">)]</span>
+<span class="n">cbp3</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   FIPSTATE FIPSCTY   NAICS EMPFLAG  ... N1000_3  N1000_4 CENSTATE  CENCTY
+1        01     001  11----          ...       0        0       63       1
+10       01     001  21----          ...       0        0       63       1
+17       01     001  22----          ...       0        0       63       1
+27       01     001  23----          ...       0        0       63       1
+93       01     001  31----          ...       0        0       63       1
+
+[5 rows x 26 columns]
+</code></pre></div></div>
+
+</section>
+
+<section>
+
+<h3 id="altering-updating-and-transforming-columns">Altering, updating and transforming columns</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">assign</code> function is the <a href="" class="pylib">pandas</a> answer to updating or altering
+your columns. It performs arbitrary operations on existing columns and appends
+the result as a new column of the same length.</p>
+
+</section>
+
+<section>
+
+<p>Here are two ways to create a new column using <code class="language-plaintext highlighter-rouge">assign</code> and the <code class="language-plaintext highlighter-rouge">[ ]</code> operators.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp3</span><span class="p">[</span><span class="s">"FIPS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cbp3</span><span class="p">[</span><span class="s">"FIPSTATE"</span><span class="p">]</span><span class="o">+</span><span class="n">cbp3</span><span class="p">[</span><span class="s">"FIPSCTY"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/usr/bin/python3:1: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp3</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">FIPS2</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s">'FIPSTATE'</span><span class="p">]</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="s">'FIPSCTY'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        FIPSTATE FIPSCTY   NAICS EMPFLAG  ... CENSTATE  CENCTY   FIPS  FIPS2
+1             01     001  11----          ...       63       1  01001  01001
+10            01     001  21----          ...       63       1  01001  01001
+17            01     001  22----          ...       63       1  01001  01001
+27            01     001  23----          ...       63       1  01001  01001
+93            01     001  31----          ...       63       1  01001  01001
+163           01     001  42----          ...       63       1  01001  01001
+218           01     001  44----          ...       63       1  01001  01001
+351           01     001  48----          ...       63       1  01001  01001
+381           01     001  51----          ...       63       1  01001  01001
+401           01     001  52----          ...       63       1  01001  01001
+429           01     001  53----          ...       63       1  01001  01001
+465           01     001  54----          ...       63       1  01001  01001
+509           01     001  55----       A  ...       63       1  01001  01001
+514           01     001  56----          ...       63       1  01001  01001
+540           01     001  61----          ...       63       1  01001  01001
+554           01     001  62----          ...       63       1  01001  01001
+615           01     001  71----          ...       63       1  01001  01001
+632           01     001  72----          ...       63       1  01001  01001
+652           01     001  81----          ...       63       1  01001  01001
+707           01     001  99----          ...       63       1  01001  01001
+709           01     003  11----          ...       63       3  01003  01003
+731           01     003  21----          ...       63       3  01003  01003
+747           01     003  22----          ...       63       3  01003  01003
+762           01     003  23----          ...       63       3  01003  01003
+828           01     003  31----          ...       63       3  01003  01003
+1052          01     003  42----          ...       63       3  01003  01003
+1191          01     003  44----          ...       63       3  01003  01003
+1353          01     003  48----          ...       63       3  01003  01003
+1429          01     003  51----          ...       63       3  01003  01003
+1471          01     003  52----          ...       63       3  01003  01003
+...          ...     ...     ...     ...  ...      ...     ...    ...    ...
+2126060       56     045  31----       C  ...       83      45  56045  56045
+2126077       56     045  42----          ...       83      45  56045  56045
+2126098       56     045  44----          ...       83      45  56045  56045
+2126163       56     045  48----          ...       83      45  56045  56045
+2126184       56     045  51----          ...       83      45  56045  56045
+2126197       56     045  52----          ...       83      45  56045  56045
+2126215       56     045  53----          ...       83      45  56045  56045
+2126229       56     045  54----          ...       83      45  56045  56045
+2126256       56     045  55----       A  ...       83      45  56045  56045
+2126261       56     045  56----          ...       83      45  56045  56045
+2126278       56     045  61----       A  ...       83      45  56045  56045
+2126283       56     045  62----          ...       83      45  56045  56045
+2126326       56     045  71----       A  ...       83      45  56045  56045
+2126331       56     045  72----          ...       83      45  56045  56045
+2126345       56     045  81----          ...       83      45  56045  56045
+2126376       56     045  99----       A  ...       83      45  56045  56045
+2126378       56     999  21----          ...       83     999  56999  56999
+2126390       56     999  22----       A  ...       83     999  56999  56999
+2126395       56     999  23----          ...       83     999  56999  56999
+2126407       56     999  42----          ...       83     999  56999  56999
+2126452       56     999  44----       A  ...       83     999  56999  56999
+2126457       56     999  48----       E  ...       83     999  56999  56999
+2126466       56     999  51----          ...       83     999  56999  56999
+2126489       56     999  52----          ...       83     999  56999  56999
+2126519       56     999  54----          ...       83     999  56999  56999
+2126542       56     999  55----       A  ...       83     999  56999  56999
+2126547       56     999  56----          ...       83     999  56999  56999
+2126570       56     999  61----       A  ...       83     999  56999  56999
+2126578       56     999  62----          ...       83     999  56999  56999
+2126592       56     999  81----       A  ...       83     999  56999  56999
+
+[58901 rows x 28 columns]
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp3</span><span class="p">.</span><span class="n">shape</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(58901, 27)
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp3</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   FIPSTATE FIPSCTY   NAICS EMPFLAG  ... N1000_4  CENSTATE CENCTY   FIPS
+1        01     001  11----          ...       0        63      1  01001
+10       01     001  21----          ...       0        63      1  01001
+17       01     001  22----          ...       0        63      1  01001
+27       01     001  23----          ...       0        63      1  01001
+93       01     001  31----          ...       0        63      1  01001
+
+[5 rows x 27 columns]
+</code></pre></div></div>
+
+</section>
+
+<section>
+
+<h3 id="select">Select</h3>
+
+<p>To keep particular columns of a data frame (rather than filtering rows), use the
+<code class="language-plaintext highlighter-rouge">filter</code> or <code class="language-plaintext highlighter-rouge">[ ]</code> functions with arguments that match column names.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp2</span><span class="p">.</span><span class="n">columns</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Index(['FIPSTATE', 'FIPSCTY', 'NAICS', 'EMPFLAG', 'EMP_NF', 'EMP', 'QP1_NF',
+       'QP1', 'AP_NF', 'AP', 'EST', 'N1_4', 'N5_9', 'N10_19', 'N20_49',
+       'N50_99', 'N100_249', 'N250_499', 'N500_999', 'N1000', 'N1000_1',
+       'N1000_2', 'N1000_3', 'N1000_4', 'CENSTATE', 'CENCTY'],
+      dtype='object')
+</code></pre></div></div>
+
+</section>
+
+<section>
+
+<p>One way to “match” is by including complete names, each one you want to keep:</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp3</span> <span class="o">=</span> <span class="n">cbp3</span><span class="p">[[</span><span class="s">'FIPS'</span><span class="p">,</span><span class="s">'NAICS'</span><span class="p">,</span><span class="s">'N1_4'</span><span class="p">,</span> <span class="s">'N5_9'</span><span class="p">,</span> <span class="s">'N10_19'</span><span class="p">]]</span> 
+<span class="n">cbp3</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     FIPS   NAICS  N1_4  N5_9  N10_19
+1   01001  11----     5     1       0
+10  01001  21----     0     1       1
+17  01001  22----     2     1       2
+27  01001  23----    51    13       7
+93  01001  31----     9     4       4
+</code></pre></div></div>
+
+</section>
+
+<section>
+
+<p>Alternatively, we can use the <code class="language-plaintext highlighter-rouge">filter</code> function to select all columns starting with N or matching with ‘FIPS’ or ‘NAICS’ pattern. The <code class="language-plaintext highlighter-rouge">filter</code> command is useful when chaining methods (or piping operations).</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp4</span><span class="o">=</span> <span class="n">cbp</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s">'^N|FIPS|NAICS'</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+<span class="n">cbp4</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  FIPSTATE FIPSCTY   NAICS  N1_4  ...  N1000_1  N1000_2  N1000_3  N1000_4
+0       01     001  ------   430  ...        0        0        0        0
+1       01     001  11----     5  ...        0        0        0        0
+2       01     001  113///     4  ...        0        0        0        0
+3       01     001  1133//     4  ...        0        0        0        0
+4       01     001  11331/     4  ...        0        0        0        0
+
+[5 rows x 16 columns]
+</code></pre></div></div>
+
+</section>
+
+<p class="ToS"><a href="#/slides/dml">Top of Section</a></p>
+
+<hr />
+<p><a name="/slides/join"></a></p>
+
+<section><h2 id="join">Join</h2>
+
+<p>The CBP dataset uses FIPS to identify U.S. counties and NAICS codes to identify
+types of industry. The ACS dataset also uses FIPS but their data may aggregate
+across multiple NAICS codes representing a single industry sector.</p>
+
+</section>
+
+<section>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code>
+<span class="n">sector</span> <span class="o">=</span>  <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span>
+  <span class="s">'data/ACS/sector_naics.csv'</span><span class="p">,</span>
+  <span class="n">dtype</span> <span class="o">=</span> <span class="p">{</span><span class="s">"NAICS"</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">int64</span><span class="p">})</span>
+<span class="k">print</span><span class="p">(</span><span class="n">sector</span><span class="p">.</span><span class="n">dtypes</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Sector    object
+NAICS      int64
+dtype: object
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">cbp</span><span class="p">.</span><span class="n">dtypes</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FIPSTATE    object
+FIPSCTY     object
+NAICS       object
+EMPFLAG     object
+EMP_NF      object
+EMP          int64
+QP1_NF      object
+QP1          int64
+AP_NF       object
+AP           int64
+EST          int64
+N1_4         int64
+N5_9         int64
+N10_19       int64
+N20_49       int64
+N50_99       int64
+N100_249     int64
+N250_499     int64
+N500_999     int64
+N1000        int64
+N1000_1      int64
+N1000_2      int64
+N1000_3      int64
+N1000_4      int64
+CENSTATE     int64
+CENCTY       int64
+dtype: object
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  FIPSTATE FIPSCTY   NAICS EMPFLAG  ... N1000_3  N1000_4 CENSTATE  CENCTY
+0       01     001  ------          ...       0        0       63       1
+1       01     001  11----          ...       0        0       63       1
+2       01     001  113///          ...       0        0       63       1
+3       01     001  1133//          ...       0        0       63       1
+4       01     001  11331/          ...       0        0       63       1
+
+[5 rows x 26 columns]
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp</span><span class="p">.</span><span class="n">dtypes</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FIPSTATE    object
+FIPSCTY     object
+NAICS       object
+EMPFLAG     object
+EMP_NF      object
+EMP          int64
+QP1_NF      object
+QP1          int64
+AP_NF       object
+AP           int64
+EST          int64
+N1_4         int64
+N5_9         int64
+N10_19       int64
+N20_49       int64
+N50_99       int64
+N100_249     int64
+N250_499     int64
+N500_999     int64
+N1000        int64
+N1000_1      int64
+N1000_2      int64
+N1000_3      int64
+N1000_4      int64
+CENSTATE     int64
+CENCTY       int64
+dtype: object
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  FIPSTATE FIPSCTY   NAICS EMPFLAG  ... N1000_3  N1000_4 CENSTATE  CENCTY
+0       01     001  ------          ...       0        0       63       1
+1       01     001  11----          ...       0        0       63       1
+2       01     001  113///          ...       0        0       63       1
+3       01     001  1133//          ...       0        0       63       1
+4       01     001  11331/          ...       0        0       63       1
+
+[5 rows x 26 columns]
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">sector</span><span class="p">.</span><span class="n">dtypes</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Sector    object
+NAICS      int64
+dtype: object
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">sector</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1">#24 economic sectors
+</span></code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(24, 2)
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">sector</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                                        Sector  NAICS
+0     agriculture forestry fishing and hunting     11
+1  mining quarrying and oil and gas extraction     21
+2                                    utilities     22
+3                                 construction     23
+4                                manufacturing     31
+</code></pre></div></div>
+
+<p class="notes">Probably the primary challenge in combining secondary datasets for synthesis
+research is dealing with their different sampling frames. A very common issue is
+that data are collected at different “scales”, with one dataset being at higher
+spatial or temporal resolution than another. The differences between the CBP and
+ACS categories of industry present a similar problem, and require the same
+solution of re-aggregating data at the “lower resolution”.</p>
+
+</section>
+
+<section>
+
+<h3 id="many-to-one">Many-to-One</h3>
+
+<p>Before performing the join operation, some preprocessing is necessary to extract from the NAICS columns the first two digits matching the sector identifiers.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code>
+<span class="n">logical_idx</span> <span class="o">=</span> <span class="n">cbp</span><span class="p">[</span><span class="s">'NAICS'</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">match</span><span class="p">(</span><span class="s">'[0-9]{2}----'</span><span class="p">)</span> <span class="c1">#boolean index
+</span><span class="n">cbp</span> <span class="o">=</span> <span class="n">cbp</span><span class="p">.</span><span class="n">loc</span><span class="p">[</span><span class="n">logical_idx</span><span class="p">]</span>
+<span class="n">cbp</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   FIPSTATE FIPSCTY   NAICS EMPFLAG  ... N1000_3  N1000_4 CENSTATE  CENCTY
+1        01     001  11----          ...       0        0       63       1
+10       01     001  21----          ...       0        0       63       1
+17       01     001  22----          ...       0        0       63       1
+27       01     001  23----          ...       0        0       63       1
+93       01     001  31----          ...       0        0       63       1
+
+[5 rows x 26 columns]
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp</span><span class="p">.</span><span class="n">shape</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(58901, 26)
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp</span><span class="p">[</span><span class="s">'NAICS'</span><span class="p">]</span><span class="o">=</span> <span class="n">cbp</span><span class="p">.</span><span class="n">NAICS</span><span class="p">.</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">int64</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]))</span> <span class="c1"># select first two digits
+</span></code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="c1">#Many to one to join economic sector code to NAICS
+</span>
+<span class="n">cbp_test</span> <span class="o">=</span> <span class="n">cbp</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">on</span> <span class="o">=</span> <span class="s">"NAICS"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s">'inner'</span><span class="p">)</span>
+<span class="n">cbp_test</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  FIPSTATE FIPSCTY  ...  CENCTY                                    Sector
+0       01     001  ...       1  agriculture forestry fishing and hunting
+1       01     003  ...       3  agriculture forestry fishing and hunting
+2       01     005  ...       5  agriculture forestry fishing and hunting
+3       01     007  ...       7  agriculture forestry fishing and hunting
+4       01     009  ...       9  agriculture forestry fishing and hunting
+
+[5 rows x 27 columns]
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">cbp_test</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(56704, 27)
+</code></pre></div></div>
+
+</section>
+
+<section>
+
+<p><img src="https://cdn.jsdelivr.net/gh/SESYNC-ci/census-data-manipulation-in-Python-lesson@v0.2/docs/assets/images/many-to-one.svg" alt="" width="80%" /></p>
+
+<p class="notes">The NAICS field in the <code class="language-plaintext highlighter-rouge">cbp</code> table can have the same value multiple times, it is
+not a primary key in this table. In the <code class="language-plaintext highlighter-rouge">sector</code> table, the NAICS field is the
+primary key uniquely identifying each record. The type of relationship between
+these tables is therefore “many-to-one”.</p>
+
+</section>
+
+<section>
+
+<dl>
+  <dt>Question</dt>
+  <dd>Note that we lost a couple thousand rows through this join. How could
+<code class="language-plaintext highlighter-rouge">cbp</code> have fewer rows after a join on NAICS codes?</dd>
+  <dt>Answer</dt>
+  <dd class="fragment">The CBP data contains an NAICS code not mapped to a sector—the
+“error code” 99 is not present in <code class="language-plaintext highlighter-rouge">sector</code>. The use of “error codes” that
+could easilly be mistaken for data is frowned upon.</dd>
+</dl>
+
+</section>
+
+<section>
+
+<h2 id="group-by">Group By</h2>
+
+<p>A very common data manipulation procedure know as “split-apply-combine” tackles
+the problem of applying the same transformation to subsets of data while keeping
+the result all together. We need the total number of establishments
+in each size class <em>aggregated within</em> each county and industry sector.</p>
+
+</section>
+
+<section>
+
+<p>The pandas function <code class="language-plaintext highlighter-rouge">groupby</code> begins the process by indicating how the data
+frame should be split into subsets.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code>
+<span class="n">cbp</span><span class="p">[</span><span class="s">"FIPS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cbp</span><span class="p">[</span><span class="s">"FIPSTATE"</span><span class="p">]</span><span class="o">+</span><span class="n">cbp</span><span class="p">[</span><span class="s">"FIPSCTY"</span><span class="p">]</span>
+<span class="n">cbp</span> <span class="o">=</span> <span class="n">cbp</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">on</span> <span class="o">=</span> <span class="s">"NAICS"</span><span class="p">)</span>
+
+<span class="n">cbp_grouped</span> <span class="o">=</span> <span class="n">cbp</span><span class="p">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">'FIPS'</span><span class="p">,</span><span class="s">'Sector'</span><span class="p">])</span>
+<span class="n">cbp_grouped</span>
+
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f6908abe668&gt;
+</code></pre></div></div>
+
+</section>
+
+<section>
+
+<p>At this point, nothing has really changed:</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">cbp_grouped</span><span class="p">.</span><span class="n">dtypes</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                                                         FIPSTATE  ... CENCTY
+FIPS  Sector                                                       ...       
+01001 accommodation and food services                      object  ...  int64
+      administrative and support and waste management...   object  ...  int64
+      agriculture forestry fishing and hunting             object  ...  int64
+      arts entertainment and recreation                    object  ...  int64
+      construction                                         object  ...  int64
+      educational services                                 object  ...  int64
+      finance and insurance                                object  ...  int64
+      health care and social assistance                    object  ...  int64
+      information                                          object  ...  int64
+      management of companies and enterprises              object  ...  int64
+      manufacturing                                        object  ...  int64
+      mining quarrying and oil and gas extraction          object  ...  int64
+      other services except public administration          object  ...  int64
+      professional scientific and technical services       object  ...  int64
+      real estate and rental and leasing                   object  ...  int64
+      retail trade                                         object  ...  int64
+      transportation and warehousing                       object  ...  int64
+      utilities                                            object  ...  int64
+      wholesale trade                                      object  ...  int64
+01003 accommodation and food services                      object  ...  int64
+      administrative and support and waste management...   object  ...  int64
+      agriculture forestry fishing and hunting             object  ...  int64
+      arts entertainment and recreation                    object  ...  int64
+      construction                                         object  ...  int64
+      educational services                                 object  ...  int64
+      finance and insurance                                object  ...  int64
+      health care and social assistance                    object  ...  int64
+      information                                          object  ...  int64
+      management of companies and enterprises              object  ...  int64
+      manufacturing                                        object  ...  int64
+...                                                           ...  ...    ...
+56045 arts entertainment and recreation                    object  ...  int64
+      construction                                         object  ...  int64
+      educational services                                 object  ...  int64
+      finance and insurance                                object  ...  int64
+      health care and social assistance                    object  ...  int64
+      information                                          object  ...  int64
+      management of companies and enterprises              object  ...  int64
+      manufacturing                                        object  ...  int64
+      mining quarrying and oil and gas extraction          object  ...  int64
+      other services except public administration          object  ...  int64
+      professional scientific and technical services       object  ...  int64
+      real estate and rental and leasing                   object  ...  int64
+      retail trade                                         object  ...  int64
+      transportation and warehousing                       object  ...  int64
+      utilities                                            object  ...  int64
+      wholesale trade                                      object  ...  int64
+56999 administrative and support and waste management...   object  ...  int64
+      construction                                         object  ...  int64
+      educational services                                 object  ...  int64
+      finance and insurance                                object  ...  int64
+      health care and social assistance                    object  ...  int64
+      information                                          object  ...  int64
+      management of companies and enterprises              object  ...  int64
+      mining quarrying and oil and gas extraction          object  ...  int64
+      other services except public administration          object  ...  int64
+      professional scientific and technical services       object  ...  int64
+      retail trade                                         object  ...  int64
+      transportation and warehousing                       object  ...  int64
+      utilities                                            object  ...  int64
+      wholesale trade                                      object  ...  int64
+
+[56704 rows x 26 columns]
+</code></pre></div></div>
+
+<p class="notes">The <code class="language-plaintext highlighter-rouge">groupby</code> statement generates a groupby data frame. You can add multiple variables
+(separated by commas) in <code class="language-plaintext highlighter-rouge">groupby</code>; each distinct combination of values across
+these columns defines a different group.</p>
+
+</section>
+
+<section>
+
+<h2 id="summarize">Summarize</h2>
+
+<p>The operation to perform on each group is summing: we need to sum the number of
+establishments in each group. Using <a href="" class="rlib">pandas</a> functions, the summaries
+are automically combined into a data frame.</p>
+
+</section>
+
+<section>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code>
+<span class="n">grouped_df</span> <span class="o">=</span> <span class="p">(</span><span class="n">cbp</span>
+<span class="p">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">'FIPS'</span><span class="p">,</span> <span class="s">'Sector'</span><span class="p">])</span> 
+<span class="p">.</span><span class="n">agg</span><span class="p">(</span><span class="s">'sum'</span><span class="p">)</span>
+<span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s">'^N'</span><span class="p">)</span>
+<span class="p">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'NAICS'</span><span class="p">])</span>
+<span class="p">)</span>
+
+<span class="n">grouped_df</span><span class="p">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                                                          N1_4  ...  N1000_4
+FIPS  Sector                                                    ...         
+01001 accommodation and food services                       23  ...        0
+      administrative and support and waste management...    18  ...        0
+      agriculture forestry fishing and hunting               5  ...        0
+      arts entertainment and recreation                      5  ...        0
+      construction                                          51  ...        0
+
+[5 rows x 13 columns]
+</code></pre></div></div>
+
+<p class="notes">The “combine” part of “split-apply-combine” occurs automatically, when the
+attributes introduced by <code class="language-plaintext highlighter-rouge">groupby</code> are dropped. You can see attributes 
+by running the <code class="language-plaintext highlighter-rouge">dtypes</code> function on the data frame.</p>
+
+</section>
+
+<section>
+
+<p><img src="https://cdn.jsdelivr.net/gh/SESYNC-ci/census-data-manipulation-in-Python-lesson@v0.2/docs/assets/images/one-to-one.svg" alt="" width="80%" /></p>
+
+<p class="notes">There is now a one-to-one relationship between <code class="language-plaintext highlighter-rouge">cbp</code> and <code class="language-plaintext highlighter-rouge">acs</code>, based on
+the combination of FIPS and Sector as the primary key for both tables.</p>
+
+</section>
+
+<section>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">grouped_df</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(56704, 13)
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">acs</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(59698, 4)
+</code></pre></div></div>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">acs_cbp</span> <span class="o">=</span> <span class="n">grouped_df</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">acs</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s">'FIPS'</span><span class="p">,)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">acs_cbp</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(1061416, 17)
+</code></pre></div></div>
+
+<p class="notes">Again, however, the one-to-one relationship does not mean all rows are preserved
+by the join. The specific nature of the <code class="language-plaintext highlighter-rouge">inner_join</code> is to keep all rows, even
+duplicating rows if the relationship is many-to-one, where there are matching
+values in both tables, and discarding the rest.</p>
+
+</section>
+
+<section>
+
+<p>The <code class="language-plaintext highlighter-rouge">acs_cbp</code> table now includes the <code class="language-plaintext highlighter-rouge">median_income</code> variable from the ACS and
+appropriatey aggregated establishment size information (the number of
+establishments by employee bins) from the CBP table.</p>
+
+<div class="language-python text-document highlighter-rouge" title="worksheet.ipynb"><div class="highlight"><pre class="highlight"><code><span class="n">acs_cbp</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext output highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    FIPS  N1_4  ...                                       Sector  median_income
+0  01001    23  ...     agriculture forestry fishing and hunting        27235.0
+1  01001    23  ...  mining quarrying and oil and gas extraction       102722.0
+2  01001    23  ...                                 construction        31632.0
+3  01001    23  ...                                manufacturing        40233.0
+4  01001    23  ...                              wholesale trade        41656.0
+
+[5 rows x 17 columns]
+</code></pre></div></div>
+
+</section>
+
+<p class="ToS"><a href="#/slides/join">Top of Section</a></p>
+
+<hr />
+<p><a name="/slides/conclude"></a></p>
+
+<section><h2 id="additional-resources">Additional Resources</h2>
+
+<p>The following cheat sheets and tutorials repeat much of this lesson, but also
+provide information on additional functions for “data wrangling”.</p>
+
+<ul>
+  <li><a href="https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf">Data Wrangling Cheat Sheet</a></li>
+  <li><a href="https://stmorse.github.io/journal/tidyverse-style-pandas.html">Tidyverse In Pandas</a></li>
+  <li><a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/text.html">String and Text With Pandas</a></li>
+</ul>
+
+<p class="notes">The first is a set of cheat sheets created by <a href="https://pydata.org/">pydata.org</a>, and
+provides a handy, visual summary of all the key functions discussed in this
+lesson. It also lists some of the auxiliary functions that can be used within
+each type of expression, e.g. aggregation functions for summarize, “moving
+window” functions for mutate, etc. For those familiar with the tidyverse univers, 
+please consult the second link.</p>
+
+</section>
+
+<p class="ToS"><a href="#/slides/conclude">Top of Section</a></p>
+
+
+        <hr>
+
+<p>If you need to catch-up before a section of code will work, just squish it's
+🍅 to copy code above it into your clipboard. Then paste into your interpreter's
+console, run, and you'll be ready to start in on that section. Code copied by
+both 🍅 and 📋 will also appear below, where you can edit first, and then copy,
+paste, and run again.</p>
+
+<div class="output">
+  <pre id="ketchup" contenteditable="true"><code># Nothing here yet!</code></pre>
+</div>
+
+<script>
+$(document).ready(function(){
+  
+  // Add code help icons to code blocks
+  $('.input, .text-document').append('<ul class="code-help">');
+  $('.code-help')
+    .append('<li class="clipboard">📋</li>');
+  $('.text-document:not(.no-eval) .code-help')
+    .append('<li class="ketchup">🍅</li>');
+
+  // Bind copy actions to mouse clicks on icons
+  var $ketchup = $('#ketchup');
+  var rng = document.createRange();
+  var sel = window.getSelection();
+  $('.ketchup').click(function(){
+    var $prev = $(this)
+      .parents('.text-document')
+      .prevAll('.text-document:has(.ketchup)');
+    $ketchup.find('code').text($prev.find('pre').text());
+    rng.selectNodeContents($ketchup[0]);
+    sel.removeAllRanges();
+    sel.addRange(rng);
+    document.execCommand("copy");
+    sel.removeAllRanges();
+  });
+  $('.text-document .clipboard').click(function(){
+    var pre = $(this).parents('.text-document').find('pre').text();
+    $ketchup.find('code').text(pre);
+    rng.selectNodeContents($ketchup[0]);
+    sel.removeAllRanges();
+    sel.addRange(rng);
+    document.execCommand("copy");
+    sel.removeAllRanges();
+  });
+  $('.input .clipboard').click(function(){
+    var pre = $(this).parents('.input').find('pre').text();
+    pre = pre.replace(/(^|\n)[>+] /g, '$1');
+    $ketchup.find('code').text(pre);
+    rng.selectNodeContents($ketchup[0]);
+    sel.removeAllRanges();
+    sel.addRange(rng);
+    document.execCommand("copy");
+    sel.removeAllRanges();
+  });
+});
+</script>
+      </div>
+    </div>
+    <script>
+$(document).ready(function(){
+  // Add links to R and Python package repositories
+  $('a.rlib').map(function(){
+    this.href = 'https://cran.r-project.org/package=' + this.innerText;
+  });
+  $('a.pylib').map(function(){
+    this.href = 'https://pypi.python.org/pypi/' + this.innerText;
+  });
+});
+</script>
+
+    <footer>
+      <p>
+        <a href="https://github.com/SESYNC-ci/sesync-ci.github.io/blob/master/lesson/lesson-lifecycle.md" target="_blank">
+          <img src="https://img.shields.io/badge/lifecycle-beta-blue.svg" alt="Lifecycle status"> 
+        </a>
+      </p>
+      <p>
+        <a href="https://github.com/SESYNC-ci/census-data-manipulation-in-Python-lesson/issues" target="_blank">
+          <i class="fas fa-exclamation-circle" aria-hidden="true"></i> report an issue
+        </a>
+      </p>
+      <p>Site maintained by
+        <a href="https://github.com/SESYNC-ci">SESYNC-ci</a>
+      </p>
+    </footer>
+  </body>
+</html>
