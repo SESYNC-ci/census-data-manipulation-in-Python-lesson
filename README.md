@@ -1,4 +1,5 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-beta-blue.svg)](https://github.com/SESYNC-ci/sesync-ci.github.io/blob/master/lesson/lesson-lifecycle.md#beta)
+[![DOI](https://zenodo.org/badge/195071498.svg)](https://zenodo.org/badge/latestdoi/195071498)
 
 ## Census Data Manipulation in Python Lesson
 
