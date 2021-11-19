@@ -3,12 +3,13 @@ handouts:
  - worksheet.ipynb
  - data/cbp15co.csv
  - data/ACS
-tag: v0.2
+tag: v0.3
 lesson: 12
 instructor: 
 lifecycle: beta # status for lifecycle badge
 badgecolor: blue # color for lifecycle badge
 warning: true # whether to include note about lifecycle status
+doi: 10.5281/zenodo.5708292
 authors:
  -  Benoit Parmentier
  -  Ian Carroll
