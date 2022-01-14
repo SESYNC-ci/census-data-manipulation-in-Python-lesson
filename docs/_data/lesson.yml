@@ -9,7 +9,7 @@ instructor:
 lifecycle: beta # status for lifecycle badge
 badgecolor: blue # color for lifecycle badge
 warning: true # whether to include note about lifecycle status
-doi: 10.5281/zenodo.5708292
+doi: 10.5281/zenodo.5708291
 authors:
  -  Benoit Parmentier
  -  Ian Carroll
